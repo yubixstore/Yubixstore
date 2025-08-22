@@ -44,6 +44,106 @@
   <script src="script.js"></script>
 </body>
 </html>
+// ===== إعدادات تليقرام =====
+const BOT_TOKEN = "توكن_البوت";
+const CHAT_ID = "CHAT_ID";
+
+// المنتجات (تتخزن محليا)
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+// عرض المنتجات
+function renderProducts() {
+  const container = document.getElementById("products");
+  if (!container) return;
+  container.innerHTML = "";
+  products.forEach((p, i) => {
+    container.innerHTML += `
+      <div class="product">
+        <img src="${p.image}" alt="${p.name}">
+        <h3>${p.name}</h3>
+        <button onclick="openProduct(${i})">شراء</button>
+      </div>
+    `;
+  });
+}
+
+// فتح المتجر
+function enterStore() {
+  document.getElementById("welcome").style.display = "none";
+  document.getElementById("store").style.display = "block";
+  renderProducts();
+}
+
+// فتح منتج
+function openProduct(index) {
+  const modal = document.getElementById("productModal");
+  modal.style.display = "block";
+  document.getElementById("modalProductName").textContent = products[index].name;
+  document.getElementById("orderForm").onsubmit = (e) => {
+    e.preventDefault();
+    sendOrderToTelegram(products[index].name);
+    closeModal();
+  };
+}
+
+// غلق نافذة
+function closeModal() {
+  document.getElementById("productModal").style.display = "none";
+}
+
+// إرسال الطلب
+function sendOrderToTelegram(productName) {
+  const order = {
+    product: productName,
+    color: document.getElementById("color").value,
+    quantity: document.getElementById("quantity").value,
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value
+  };
+
+  const message = `
+🛒 طلب جديد
+-------------------
+📦 المنتج: ${order.product}
+🎨 اللون: ${order.color}
+🔢 الكمية: ${order.quantity}
+👤 الاسم: ${order.name}
+📞 الهاتف: ${order.phone}
+🏠 العنوان: ${order.address}
+`;
+
+  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ chat_id: CHAT_ID, text: message })
+  });
+  alert("✅ تم إرسال طلبك بنجاح!");
+}
+
+// إضافة منتج جديد
+const form = document.getElementById("addProductForm");
+if (form) {
+  form.onsubmit = (e) => {
+    e.preventDefault();
+    const name = document.getElementById("productName").value;
+    const image = document.getElementById("productImage").value;
+    products.push({ name, image });
+    localStorage.setItem("products", JSON.stringify(products));
+    alert("✅ تمت إضافة المنتج!");
+  };
+}
+body { font-family: Arial, sans-serif; direction: rtl; text-align: center; background: #f7f7f7; }
+h1, h2 { color: #333; }
+.product { display: inline-block; margin: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 10px; background: white; }
+.product img { width: 150px; height: 150px; object-fit: cover; border-radius: 10px; }
+button { background: #0077cc; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
+button:hover { background: #005fa3; }
+.modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); }
+.modal-content { background: white; margin: 10% auto; padding: 20px; width: 300px; border-radius: 10px; }
+.close { float: right; cursor: pointer; }
+footer { margin-top: 30px; background: #222; color: white; padding: 10px; }
+
 
 
 
