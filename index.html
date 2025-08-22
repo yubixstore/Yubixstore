@@ -2,172 +2,48 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>متجر أيوب</title>
-  <style>
-    body { font-family: Arial, sans-serif; direction: rtl; margin:0; padding:0; background:#f8f8f8; }
-    header, footer { text-align: center; padding: 20px; background: #222; color: white; }
-    .start-screen { height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#222; color:white; }
-    .btn { background:#e91e63; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer; }
-    .container { display: none; padding: 20px; }
-    .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
-    .card { background:white; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,.1); padding:10px; text-align:center; }
-    .card img { max-width:100%; border-radius:8px; height:200px; object-fit:cover; }
-    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6); justify-content:center; align-items:center; }
-    .modal-content { background:white; padding:20px; border-radius:10px; width:90%; max-width:400px; }
-    input, select { width:100%; margin:5px 0; padding:8px; border:1px solid #ccc; border-radius:6px; }
-  </style>
+  <title>متجر Yubix</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-  <!-- شاشة البداية -->
-  <div class="start-screen" id="startScreen">
-    <h1>🌟 متجر أيوب 🌟</h1>
-    <p>أهلا بك في متجرنا</p>
-    <button class="btn" onclick="enterStore()">ادخل للمتجر</button>
+  <div id="welcome">
+    <h1>🛍️ Yubix Store</h1>
+    <button onclick="enterStore()">ادخل للمتجر</button>
   </div>
 
-  <!-- المتجر -->
-  <div class="container" id="storeContainer">
-    <header>
-      <h2>🛒 متجر أيوب</h2>
-    </header>
-
-    <div class="products" id="productList"></div>
-
-    <footer>
-      <p>شكرا على الزيارة 💖 تابعونا على مواقع التواصل الاجتماعي</p>
-    </footer>
+  <div id="store" style="display:none;">
+    <h2>المنتجات</h2>
+    <div id="products"></div>
   </div>
 
   <!-- نافذة تفاصيل المنتج -->
-  <div class="modal" id="productModal">
+  <div id="productModal" class="modal">
     <div class="modal-content">
-      <h3 id="modalTitle"></h3>
-      <img id="modalImage" src="" alt="" style="width:100%; border-radius:8px;">
-      <p id="modalPrice"></p>
-      <label>اللون:</label>
-      <select id="colorSelect">
-        <option>أسود</option>
-        <option>أبيض</option>
-        <option>أحمر</option>
-        <option>أزرق</option>
-      </select>
-      <label>الكمية:</label>
-      <input type="number" id="quantityInput" value="1" min="1">
-      <label>اسمك:</label>
-      <input type="text" id="buyerName">
-      <label>الهاتف:</label>
-      <input type="text" id="buyerPhone">
-      <label>العنوان:</label>
-      <input type="text" id="buyerAddress">
-      <button class="btn" onclick="saveOrder()">تأكيد الطلب</button>
-      <button class="btn" style="background:#555;" onclick="closeModal()">إغلاق</button>
+      <span onclick="closeModal()" class="close">&times;</span>
+      <h3 id="modalProductName"></h3>
+      <form id="orderForm">
+        <label>اللون:</label>
+        <input type="text" id="color"><br>
+        <label>الكمية:</label>
+        <input type="number" id="quantity" min="1" value="1"><br>
+        <label>اسمك:</label>
+        <input type="text" id="name"><br>
+        <label>الهاتف:</label>
+        <input type="text" id="phone"><br>
+        <label>العنوان:</label>
+        <textarea id="address"></textarea><br>
+        <button type="submit">تأكيد الطلب</button>
+      </form>
     </div>
   </div>
 
-  <script>
-    let products = JSON.parse(localStorage.getItem("products")) || [
-      {name:"سماعات", price:"1500 دج", img:"https://via.placeholder.com/200"},
-      {name:"كابل USB", price:"500 دج", img:"https://via.placeholder.com/200"}
-    ];
+  <footer>
+    <p>شكرا على الزيارة 💖 تابعونا على مواقع التواصل الاجتماعي</p>
+  </footer>
 
-    let selectedProduct = null;
-
-    function enterStore(){
-      document.getElementById("startScreen").style.display="none";
-      document.getElementById("storeContainer").style.display="block";
-      displayProducts();
-    }
-
-    function displayProducts(){
-      let list = document.getElementById("productList");
-      list.innerHTML = "";
-      products.forEach((p,i)=>{
-        list.innerHTML += `
-          <div class="card" onclick="openModal(${i})">
-            <img src="${p.img}" alt="">
-            <h4>${p.name}</h4>
-            <p>${p.price}</p>
-            <button class="btn">عرض التفاصيل</button>
-          </div>`;
-      });
-    }
-
-    function openModal(i){
-      selectedProduct = products[i];
-      document.getElementById("modalTitle").innerText = selectedProduct.name;
-      document.getElementById("modalImage").src = selectedProduct.img;
-      document.getElementById("modalPrice").innerText = selectedProduct.price;
-      document.getElementById("productModal").style.display="flex";
-    }
-
-    function closeModal(){
-      document.getElementById("productModal").style.display="none";
-    }
-
-    function saveOrder(){
-      let order = {
-        product:selectedProduct.name,
-        color:document.getElementById("colorSelect").value,
-        quantity:document.getElementById("quantityInput").value,
-        name:document.getElementById("buyerName").value,
-        phone:document.getElementById("buyerPhone").value,
-        address:document.getElementById("buyerAddress").value
-      };
-      let orders = JSON.parse(localStorage.getItem("orders")) || [];
-      orders.push(order);
-      localStorage.setItem("orders", JSON.stringify(orders));
-      alert("✅ تم تسجيل طلبك بنجاح!");
-      closeModal();
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8">
-  <title>لوحة الإدارة</title>
-  <style>
-    body { font-family: Arial, sans-serif; direction: rtl; padding:20px; background:#f4f4f4; }
-    h2 { text-align:center; }
-    input { display:block; width:100%; margin:10px 0; padding:10px; border:1px solid #ccc; border-radius:6px; }
-    button { background:#2196F3; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer; }
-  </style>
-</head>
-<body>
-  <h2>إضافة منتج جديد</h2>
-  <input type="text" id="pName" placeholder="اسم المنتج">
-  <input type="text" id="pPrice" placeholder="السعر">
-  <input type="text" id="pImage" placeholder="رابط الصورة">
-  <button onclick="addProduct()">إضافة</button>
 
-  <h2>الطلبات المسجلة</h2>
-  <div id="ordersList"></div>
-
-  <script>
-    function addProduct(){
-      let name=document.getElementById("pName").value;
-      let price=document.getElementById("pPrice").value;
-      let img=document.getElementById("pImage").value;
-      let products=JSON.parse(localStorage.getItem("products"))||[];
-      products.push({name,price,img});
-      localStorage.setItem("products", JSON.stringify(products));
-      alert("✅ تمت إضافة المنتج!");
-    }
-
-    function showOrders(){
-      let orders=JSON.parse(localStorage.getItem("orders"))||[];
-      let list=document.getElementById("ordersList");
-      list.innerHTML="";
-      orders.forEach(o=>{
-        list.innerHTML+=`<p>📦 ${o.product} - ${o.color} - ${o.quantity} × <br>👤 ${o.name} | ☎ ${o.phone} | 📍 ${o.address}</p><hr>`;
-      });
-    }
-
-    showOrders();
-  </script>
-</body>
-</html>
 
 
