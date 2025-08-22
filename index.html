@@ -1,433 +1,128 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>متجر إكسسوارات — yubix store</title>
+  <meta charset="UTF-8">
+  <title>متجري</title>
   <style>
-    :root{--bg:#f8fafc;--card:#fff;--muted:#64748b;--accent:#e11d48;--ok:#10b981}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a}
-    header{background:linear-gradient(90deg,#ffffffcc,#f8fafc);backdrop-filter: blur(6px);border-bottom:1px solid #e6edf2;position:sticky;top:0;z-index:20}
-    .wrap{max-width:1100px;margin:0 auto;padding:16px}
-    .brand{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .brand h1{margin:0;font-size:20px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
-    .input,select,textarea{padding:10px;border:1px solid #e6edf2;border-radius:10px;background:#fff;outline:none}
-    .btn{padding:10px 14px;border-radius:12px;border:0;font-weight:700;cursor:pointer}
-    .btn-primary{background:var(--accent);color:#fff}
-    .btn-ghost{background:#fff;border:1px solid #e6edf2}
-    .layout{display:grid;grid-template-columns:2fr 1fr;gap:18px}
-    @media(max-width:880px){.layout{grid-template-columns:1fr}}
-    .card{background:var(--card);border-radius:16px;padding:14px;border:1px solid #e6edf2;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
-    .products{display:grid;gap:12px}
-    .product{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;border:1px solid #f1f5f9}
-    .prod-img{width:300px;height:auto px;border-radius:10px;background:#f1f5f9;display:grid;place-items:center;overflow:hidden}
-    .prod-img img{width:100%;height:100%;object-fit:contain;display:block}
-    .prod-body{flex:1;min-width:0}
-    .prod-title{font-weight:800;margin:0}
-    .prod-meta{color:var(--muted);font-size:13px;margin-top:4px}
-    .qty{display:inline-flex;align-items:center;border-radius:999px;border:1px solid #000000;overflow:hidden}
-    .qty button{width:34px;height:34px;border:0;background:transparent;cursor:pointer;font-size:18px}
-    .qty input{width:56px;text-align:center;border:0;outline:none}
-    .colors{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
-    .color-dot{width:28px;height:28px;border-radius:999px;border:2px solid #fff;box-shadow:0 1px 2px rgba(2,6,23,0.08);cursor:pointer;display:grid;place-items:center;font-size:12px}
-    .color-dot.sel{outline:3px solid rgba(0,0,0,0.08)}
-    .actions{display:flex;gap:8px;align-items:center}
-    .small{font-size:13px;color:var(--muted)}
-    /* Cart */
-    .cart-list{display:grid;gap:8px}
-    .cart-item{display:flex;justify-content:space-between;align-items:center}
-    footer{margin-top:20px;padding:20px;text-align:center;background:#fff;border-top:1px solid #e6edf2}
-    .socials{display:flex;justify-content:center;gap:12px;margin-top:8px}
-    .socials a{display:inline-block;padding:8px;border-radius:8px;text-decoration:none;border:1px solid #e6edf2;background:#fff}
-    .footer-thanks{font-weight:700}
-    /* editor small */
-    .row{display:flex;gap:8px;flex-wrap:wrap}
-    .muted{color:var(--muted);font-size:13px}
-    .empty{padding:20px;border:1px dashed #e6edf2;border-radius:12px;text-align:center;color:var(--muted)}
+    body {
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      background: #f8f9fa;
+    }
+    header {
+      background: #007bff;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+    .product {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    footer {
+      background: #222;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+    }
+    footer a {
+      color: #00aced;
+      margin: 0 10px;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
+
   <header>
-    <div class="wrap brand">
-      <div>
-        <h1>متجر الإكسسوارات — yubix</h1>
-        <div class="small">حفظ محليًا — أضف صورك وروابط السوشيال في الفوتر</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button id="addProductBtn" class="btn btn-primary">إضافة منتج</button>
-        <button id="resetStorage" class="btn btn-ghost">إعادة ضبط التخزين</button>
-      </div>
-    </div>
+    <h1>متجر Yubix</h1>
   </header>
 
-  <main class="wrap" style="padding-top:18px">
-    <div class="controls">
-      <input id="search" class="input" placeholder="ابحث عن منتج..." style="min-width:280px">
-      <select id="filterCat" class="input" style="min-width:160px"><option>الكل</option></select>
-      <div style="margin-left:auto" class="small">الموّلد: متصفحك — لا حاجة لسيرفر</div>
-    </div>
-
-    <div class="layout">
-      <!-- Products & Editor -->
-      <section>
-        <div id="editorArea" class="card" style="display:none;margin-bottom:12px"></div>
-
-        <div class="card">
-          <h3 style="margin:0 0 8px 0">المنتجات</h3>
-          <div id="productsList" class="products"></div>
-          <div id="noProducts" class="empty" style="display:none">لم تضف أي منتج بعد — اضغط "إضافة منتج"</div>
-        </div>
-      </section>
-
-      <!-- Cart -->
-      <aside>
-        <div class="card">
-          <h3 style="margin:0 0 8px 0">سلتك</h3>
-          <div id="cartItems" class="cart-list"></div>
-          <div style="height:10px"></div>
-          <div style="display:flex;justify-content:space-between"><div class="muted">المجموع</div><div id="subTotal">0 دج</div></div>
-          <div style="display:flex;justify-content:space-between;margin-top:6px"><div class="muted">التوصيل</div><div id="delivery">0 دج</div></div>
-          <div style="display:flex;justify-content:space-between;margin-top:8px;font-weight:800"><div>الإجمالي</div><div id="grandTotal">0 دج</div></div>
-
-          <div style="margin-top:12px;display:flex;gap:8px">
-            <button id="clearCart" class="btn btn-ghost" style="flex:1">تفريغ السلة</button>
-            <button id="checkout" class="btn btn-primary" style="flex:1">إرسال عبر واتساب</button>
-          </div>
-
-          <hr style="margin:12px 0;border:none;border-top:1px solid #eef2f6">
-          <div class="muted small">بيانات افتراضية لحفظ إعدادات واتساب</div>
-          <div style="margin-top:8px;display:grid;gap:8px">
-            <input id="cw_name" class="input" placeholder="اسم المتجر / اسم الزبون الافتراضي">
-            <input id="cw_phone" class="input" placeholder="رقم واتساب لاستقبال الطلبات (مثال: 2136...)" />
-          </div>
-        </div>
-      </aside>
-    </div>
-
-    <footer>
-      <div class="footer-thanks">شكرا على زيارتكم ❤</div>
-      <div class="socials" style="margin-top:10px">
-        <a id="linkInsta" href="#" target="_blank">📸 إنستغرام</a>
-        <a id="linkTiktok" href="#" target="_blank">🎵 تيك توك</a>
-        <a id="linkFb" href="#" target="_blank">📘 فايسبوك</a>
-        <a id="linkTg" href="#" target="_blank">✈️ تيلغرام</a>
-      </div>
-      <div class="muted small" style="margin-top:8px">يمكنك تعديل الروابط أعلاه عبر الكود أو إضافة واجهة لاحقًا</div>
-    </footer>
+  <main>
+    <h2 style="text-align:right;padding:0 20px;">المنتجات</h2>
+    <div class="products" id="products"></div>
   </main>
 
+  <footer>
+    <p>تابعنا على:</p>
+    <a id="linkInsta" href="#" target="_blank">Instagram</a>
+    <a id="linkTiktok" href="#" target="_blank">TikTok</a>
+    <a id="linkFb" href="#" target="_blank">Facebook</a>
+    <a id="linkTg" href="#" target="_blank">Telegram</a>
+  </footer>
+
 <script>
-(() => {
-  // LocalStorage keys
-  const LS_P = 'miniStore.products.v2';
-  const LS_C = 'miniStore.config.v2';
-
-  // Utilities
-  const $ = sel => document.querySelector(sel);
-  const el = (tag, props={}, ...children) => { const e = document.createElement(tag); Object.assign(e, props); children.forEach(c=>{ if(typeof c==='string') e.appendChild(document.createTextNode(c)); else if(c) e.appendChild(c)}); return e; };
-  const uid = () => Math.random().toString(36).slice(2,9);
-  const fmt = x => `${Number(x||0).toLocaleString('ar-DZ')} دج`;
-
-  // State
-  let products = JSON.parse(localStorage.getItem(LS_P) || 'null') || [
-    // demo product with color variants example (you will replace with your own)
-    { id: uid(), name: 'كاسك بلوتوث P9 من النوع الجيد', price: 2000, category: 'صوتيات', image: '', colors: [ {name:'أسود', img:''}, {name:'أحمر', img:''}, {name:'أزرق', img:''}, {name:'أبيض', img:''}, {name:'أخضر', img:''} ], qty:0, selectedColorIndex:0 }
-  ];
-  let config = JSON.parse(localStorage.getItem(LS_C) || 'null') || { shopName:'', whatsapp:'', socials:{insta:'#', tiktok:'#', fb:'#', tg:'#'} };
-  let filterQ = '';
-  let filterCat = 'الكل';
-
-  // DOM refs
-  const productsList = $('#productsList');
-  const noProducts = $('#noProducts');
-  const filterCatEl = $('#filterCat');
-  const searchEl = $('#search');
-  const editorArea = $('#editorArea');
-  const addProductBtn = $('#addProductBtn');
-  const resetStorage = $('#resetStorage');
-
-  const cartItemsEl = $('#cartItems');
-  const subTotalEl = $('#subTotal');
-  const deliveryEl = $('#delivery');
-  const grandTotalEl = $('#grandTotal');
-  const clearCartBtn = $('#clearCart');
-  const checkoutBtn = $('#checkout');
-
-  const cwName = $('#cw_name');
-  const cwPhone = $('#cw_phone');
-
-  const linkInsta = $('#linkInsta');
-  const linkTiktok = $('#linkTiktok');
-  const linkFb = $('#linkFb');
-  const linkTg = $('#linkTg');
-
-  // Init config fields
-  cwName.value = config.shopName || '';
-  cwPhone.value = config.whatsapp || '';
-  linkInsta.href = config.socials.insta || '#';
-  linkTiktok.href = config.socials.tiktok || '#';
-  linkFb.href = config.socials.fb || '#';
-  linkTg.href = config.socials.tg || '#';
-
-  // Save helpers
-  function saveAll(){ localStorage.setItem(LS_P, JSON.stringify(products)); localStorage.setItem(LS_C, JSON.stringify(config)); }
-
-  // Categories derived
-  function categories(){
-    const cats = Array.from(new Set(products.map(p=>p.category).filter(Boolean)));
-    return ['الكل', ...cats];
-  }
-
-  function setCategoryOptions(){
-    const cats = categories();
-    filterCatEl.innerHTML = cats.map(c=> `<option ${c===filterCat ? 'selected':''}>${c}</option>`).join('');
-  }
-
-  // Editor UI to add/edit product
-  function openEditor(initial){
-    editorArea.style.display = 'block';
-    // build editor form
-    editorArea.innerHTML = '';
-    const title = el('h3', {}, initial ? 'تعديل المنتج' : 'إضافة منتج');
-    const nameIn = el('input', { className:'input', placeholder:'اسم المنتج', value: initial?.name||'' });
-    const priceIn = el('input', { className:'input', type:'number', placeholder:'السعر (دج)', value: initial?.price||0 });
-    const catIn = el('input', { className:'input', placeholder:'الفئة (مثال: كابلات/حماية)', value: initial?.category||'' });
-    const mainImgIn = el('input', { className:'input', placeholder:'رابط الصورة الرئيسية (اختياري)', value: initial?.image||'' });
-
-    // colors input: comma-separated format name|imageUrl
-    const colorsIn = el('textarea', { className:'input', placeholder:'ألوان (format): اسماللون|رابط_صورة,اسماللون2|رابط_صورة2', rows:3 });
-    colorsIn.value = initial?.colors ? initial.colors.map(c=> `${c.name}|${c.img||''}` ).join(',') : '';
-
-    const hint = el('div', { className:'muted small' }, 'مثال: أسود|https://.../black.jpg,أحمر|https://.../red.jpg . يمكنك ترك روابط الصور فارغة وتضيف صورك لاحقًا.');
-
-    // buttons
-    const saveBtn = el('button', { className:'btn btn-primary' }, 'حفظ');
-    const cancelBtn = el('button', { className:'btn btn-ghost' }, 'إلغاء');
-
-    const row = el('div', { style:'display:grid;gap:8px' }, title, nameIn, priceIn, catIn, mainImgIn, colorsIn, hint, el('div', { style:'display:flex;gap:8px' }, saveBtn, cancelBtn));
-    editorArea.appendChild(row);
-
-    cancelBtn.onclick = ()=> { editorArea.style.display='none'; editorArea.innerHTML=''; render(); };
-
-    saveBtn.onclick = ()=>{
-      const name = nameIn.value.trim();
-      const price = Number(priceIn.value||0);
-      const category = catIn.value.trim();
-      const image = mainImgIn.value.trim();
-      const colorsRaw = colorsIn.value.trim();
-      const colors = colorsRaw ? colorsRaw.split(',').map(s=>{
-        const parts = s.split('|').map(x=>x.trim());
-        return { name: parts[0]||'اللون', img: parts[1]||'' };
-      }) : [];
-
-      if(!name) return alert('الاسم مطلوب');
-      if(initial){
-        products = products.map(p => p.id===initial.id ? { ...p, name, price, category, image, colors } : p);
-      } else {
-        products.unshift({ id: uid(), name, price, category, image, colors, qty:0, selectedColorIndex:0 });
+  // ⚙️ هنا تحط الإعدادات تاعك
+  const config = {
+    socials: {
+      insta: "https://instagram.com/yourpage",
+      tiktok: "https://tiktok.com/@yourpage",
+      fb: "https://facebook.com/yourpage",
+      tg: "https://t.me/yourpage"
+    },
+    products: [
+      {
+        name: "سماعات Yubix",
+        price: "2500 دج",
+        img: "images/headphones.jpg"
+      },
+      {
+        name: "شاحن سريع",
+        price: "1200 دج",
+        img: "images/charger.jpg"
+      },
+      {
+        name: "كابل USB-C",
+        price: "600 دج",
+        img: "images/cable.jpg"
       }
-      saveAll(); setCategoryOptions(); editorArea.style.display='none'; editorArea.innerHTML=''; render();
-    };
-  }
+    ]
+  };
 
-  // Render products list
-  function renderProducts(){
-    const q = (searchEl.value||'').toLowerCase();
-    const view = products.filter(p => (filterCat==='الكل' || p.category===filterCat) && p.name.toLowerCase().includes(q));
-    productsList.innerHTML = '';
-    if(view.length===0){ noProducts.style.display='block'; return; } else noProducts.style.display='none';
-
-    view.forEach(p => {
-      const prod = el('div',{ className:'product'});
-      const imgWrap = el('div',{ className:'prod-img' });
-      const imgEl = el('img', { src: (p.colors && p.colors[p.selectedColorIndex] && p.colors[p.selectedColorIndex].img) || p.image || '', alt: p.name });
-      // fallback placeholder:
-      if(!imgEl.src) imgEl.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200"><rect fill="%23f1f5f9" width="100%" height="100%"/><text x="50%" y="50%" font-size="18" text-anchor="middle" fill="%2364748b" dy=".3em">أضف صورة المنتج</text></svg>';
-      imgWrap.appendChild(imgEl);
-
-      const body = el('div',{ className:'prod-body'});
-      body.appendChild(el('h4',{ className:'prod-title' }, p.name));
-      body.appendChild(el('div',{ className:'prod-meta' }, `${p.category || 'منتج' } • ${fmt(p.price)}`));
-
-      // color options
-      const colorsWrap = el('div',{ className:'colors' });
-      if(p.colors && p.colors.length){
-        p.colors.forEach((c,i)=>{
-          const dot = el('div',{ className:'color-dot', title: c.name }, c.name[0] || '');
-          // if color name is a known color CSS, use it; else use neutral bg
-          const colorLower = (c.name||'').toLowerCase();
-          if(/^#|rgb|rgba/.test(c.img)){} // ignore
-          // try set background if c.name is a color keyword or hex:
-          try{
-            dot.style.background = (['black','white','red','blue','green','yellow','gray','gray','orange','pink','purple'].includes(colorLower) ? colorLower : '#fff');
-            if(colorLower==='white') dot.style.border='1px solid #e6edf2';
-          }catch(e){}
-          if(i === p.selectedColorIndex) dot.classList.add('sel');
-          dot.onclick = ()=>{
-            p.selectedColorIndex = i;
-            saveAll();
-            render();
-          };
-          colorsWrap.appendChild(dot);
-        });
-      }
-
-      // qty controls
-      const qtyWrap = el('div',{ style:'margin-top:8px;display:flex;align-items:center;gap:8px' });
-      const qtyLabel = el('div',{ className:'small muted' }, 'الكمية:');
-      const qtyCtrl = el('div',{ className:'qty' });
-      const dec = el('button',{}, '−');
-      const inp = el('input',{ type:'number', value: p.qty||0, min:0 });
-      const inc = el('button',{}, '+');
-      dec.onclick = ()=>{ p.qty = Math.max(0,(p.qty||0)-1); inp.value = p.qty; saveAll(); renderCart(); };
-      inc.onclick = ()=>{ p.qty = (p.qty||0)+1; inp.value = p.qty; saveAll(); renderCart(); };
-      inp.onchange = ()=>{ p.qty = Math.max(0, Number(inp.value||0)); saveAll(); renderCart(); };
-      qtyCtrl.appendChild(dec); qtyCtrl.appendChild(inp); qtyCtrl.appendChild(inc);
-      qtyWrap.appendChild(qtyLabel); qtyWrap.appendChild(qtyCtrl);
-
-      // actions
-      const actions = el('div',{ className:'actions' });
-      const editBtn = el('button',{ className:'btn btn-ghost' }, 'تعديل');
-      const delBtn = el('button',{ className:'btn', style:'background:#fee2e2;color:#b91c1c' }, 'حذف');
-      editBtn.onclick = ()=> openEditor(p);
-      delBtn.onclick = ()=>{
-        if(confirm('حذف المنتج؟')) { products = products.filter(x=>x.id!==p.id); saveAll(); setCategoryOptions(); render(); renderCart(); }
-      };
-      actions.appendChild(editBtn); actions.appendChild(delBtn);
-
-      body.appendChild(colorsWrap);
-      body.appendChild(qtyWrap);
-      body.appendChild(actions);
-
-      prod.appendChild(imgWrap);
-      prod.appendChild(body);
-      productsList.appendChild(prod);
+  // 🛒 عرض المنتجات
+  function renderProducts() {
+    const container = document.getElementById("products");
+    container.innerHTML = "";
+    config.products.forEach(p => {
+      container.innerHTML += `
+        <div class="product">
+          <img src="${p.img}" alt="${p.name}">
+          <h3>${p.name}</h3>
+          <p>${p.price}</p>
+          <button>أضف للسلة</button>
+        </div>
+      `;
     });
   }
 
-  // Cart rendering & helpers
-  function renderCart(){
-    const items = products.filter(p=> (p.qty||0) > 0);
-    cartItemsEl.innerHTML = '';
-    if(items.length===0){
-      cartItemsEl.innerHTML = '<div class="muted">السلة فارغة</div>';
-    } else {
-      items.forEach(it=>{
-        const row = el('div',{ className:'cart-item' });
-        row.appendChild(el('div',{}, `${it.name} ${it.colors && it.colors[it.selectedColorIndex] ? '('+it.colors[it.selectedColorIndex].name+')' : ''} × ${it.qty}`));
-        row.appendChild(el('div',{}, fmt(it.price * it.qty)));
-        cartItemsEl.appendChild(row);
-      });
-    }
-    const subtotal = items.reduce((s,p)=> s + p.price*(p.qty||0), 0);
-    const delivery = subtotal>0 ? 200 : 0;
-    subTotalEl.textContent = fmt(subtotal);
-    deliveryEl.textContent = fmt(delivery);
-    grandTotalEl.textContent = fmt(subtotal + delivery);
+  // 🔗 الروابط
+  function setLinks() {
+    document.getElementById("linkInsta").href = config.socials.insta || "#";
+    document.getElementById("linkTiktok").href = config.socials.tiktok || "#";
+    document.getElementById("linkFb").href = config.socials.fb || "#";
+    document.getElementById("linkTg").href = config.socials.tg || "#";
   }
 
-  // Checkout (WhatsApp)
-  function checkout(){
-    const items = products.filter(p=> (p.qty||0) > 0);
-    if(items.length===0){ alert('السلة فارغة'); return; }
-    const shopName = cwName.value.trim() || config.shopName || 'الزبون';
-    const phone = (cwPhone.value.trim() || config.whatsapp || '');
-    if(!/^\d{9,15}$/.test(phone)){ if(!confirm('رقم واتساب غير واضح. تريد المتابعة وفتح المحادثة بدون رقم (سيفتح نافذة جديدة فقط)؟')) return; }
-
-    const lines = [
-      `طلب جديد من: ${shopName}`,
-      '',
-      ...items.map(p => `• ${p.name}${p.colors && p.colors[p.selectedColorIndex] ? ' ('+p.colors[p.selectedColorIndex].name +')' : ''} × ${p.qty} = ${p.price * p.qty} دج`),
-      '',
-      `المجموع: ${items.reduce((s,p)=>s+p.price*(p.qty||0),0)} دج`,
-      `التوصيل: ${items.reduce((s,p)=>s+p.price*(p.qty||0),0) > 0 ? 200 : 0} دج`,
-      `الإجمالي: ${ (items.reduce((s,p)=>s+p.price*(p.qty||0),0)) + ( items.reduce((s,p)=>s+p.price*(p.qty||0),0) > 0 ? 200 : 0 ) } دج`,
-      '',
-      `شكراً لتسوقكم معنا ❤`
-    ];
-    const text = encodeURIComponent(lines.join('\n'));
-    const url = phone && /^\d{9,15}$/.test(phone) ? `https://wa.me/${phone}?text=${text}` : `https://wa.me/?text=${text}`;
-    window.open(url, '_blank');
-    // save last config
-    config.shopName = cwName.value.trim() || config.shopName;
-    config.whatsapp = cwPhone.value.trim() || config.whatsapp;
-    saveAll();
-  }
-
-  // Events
-  addProductBtn.onclick = ()=> openEditor();
-  resetStorage.onclick = ()=> {
-    if(confirm('ستتم إعادة ضبط المنتجات إلى الحالة الافتراضية. موافق؟')){
-      localStorage.removeItem(LS_P); localStorage.removeItem(LS_C); location.reload();
-    }
-  };
-  searchEl.oninput = ()=> render();
-  filterCatEl.onchange = ()=> { filterCat = filterCatEl.value; render(); };
-
-  clearCartBtn.onclick = ()=> {
-    products = products.map(p=> ({...p, qty:0}));
-    saveAll(); render(); renderCart();
-  };
-
-  checkoutBtn.onclick = checkout;
-
-  // social links editing quick-save (you can change through config object too)
-  [cwName, cwPhone].forEach(input => input.addEventListener('change', ()=> { config.shopName = cwName.value; config.whatsapp = cwPhone.value; saveAll(); }));
-
-  // initial render
-  setCategoryOptions();
-  render();
+  // 🚀 تشغيل
   renderProducts();
-  renderCart();
-
-  // expose render helper to reuse after changes
-  function render(){
-    setCategoryOptions();
-    renderProducts();
-    renderCart();
-    // update footer links from config
-    linkInsta.href = https://config.socials.instgram || '#';
-    linkTiktok.href = config.socials.tiktok || '#';
-    linkFb.href = config.socials.fb || '#';
-    linkTg.href = config.socials.tg || '#';
-  }
-
-})();
+  setLinks();
 </script>
+
 </body>
 </html>
-<main class="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-  <!-- صورة المنتج -->
-  <div class="flex flex-col items-center">
-    <img id="mainProductImage" src="images/headphone-black.png" alt="سماعات" class="rounded-2xl shadow-lg w-72">
-    
-    <!-- خيارات الألوان -->
-    <div class="flex space-x-2 mt-4">
-      <button onclick="changeColor('black')" class="w-8 h-8 rounded-full bg-black border-2 border-gray-300"></button>
-      <button onclick="changeColor('red')" class="w-8 h-8 rounded-full bg-red-600 border-2 border-gray-300"></button>
-      <button onclick="changeColor('blue')" class="w-8 h-8 rounded-full bg-blue-600 border-2 border-gray-300"></button>
-      <button onclick="changeColor('green')" class="w-8 h-8 rounded-full bg-green-600 border-2 border-gray-300"></button>
-      <button onclick="changeColor('white')" class="w-8 h-8 rounded-full bg-white border-2 border-gray-300"></button>
-    </div>
-  </div>
-
-  <!-- تفاصيل المنتج -->
-  <div class="flex flex-col justify-center">
-    <h2 class="text-2xl font-bold mb-4">سماعات YUBIX Pro</h2>
-    <p class="mb-4">أفضل جودة صوت، بطارية طويلة المدى، وخيارات ألوان متعددة.</p>
-    <button class="bg-[var(--primary-color)] text-white px-6 py-3 rounded-xl shadow-md hover:opacity-80 transition">
-      أطلب الآن
-    </button>
-  </div>
-</main>
-
-
-
-
-
-
-
-
 
