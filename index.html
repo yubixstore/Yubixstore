@@ -24,6 +24,7 @@
   @media(max-width:900px){.grid{grid-template-columns:1fr}}
   .products{display:grid;gap:10px}
   .product{display:flex;gap:12px;align-items:center;padding:12px;border-radius:14px;border:1px solid #eef2f7}
+  .product .click{display:flex;gap:12px;align-items:center;flex:1;min-width:0;cursor:pointer}
   .pimg{width:66px;height:66px;border-radius:14px;background:#eef2f7;overflow:hidden;display:grid;place-items:center}
   .pimg img{width:100%;height:100%;object-fit:cover}
   .title{margin:0;font-weight:800}
@@ -41,6 +42,17 @@
   footer{text-align:center;color:#5b6b82;margin:22px 0}
   footer .socials{display:flex;gap:10px;justify-content:center;margin-top:6px}
   footer .socials a{padding:8px 10px;border:1px solid #e6edf6;background:#fff;border-radius:10px;text-decoration:none;color:#0b1220}
+
+  /* ====== Modal (تفاصيل المنتج) ====== */
+  #detailOverlay{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}
+  .detail-card{background:#fff;border-radius:18px;max-width:640px;width:100%;display:grid;grid-template-columns:180px 1fr;gap:16px;padding:16px;border:1px solid #e7eef6;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+  @media(max-width:640px){.detail-card{grid-template-columns:1fr}}
+  .detail-img{width:100%;height:180px;background:#eef2f7;border-radius:14px;overflow:hidden;display:grid;place-items:center}
+  .detail-img img{width:100%;height:100%;object-fit:cover}
+  .detail-head{display:flex;justify-content:space-between;gap:8px}
+  .x{background:#eef2f7;border:0;border-radius:10px;width:36px;height:36px;cursor:pointer}
+  .detail-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  .btn-ghost{background:#fff;border:1px solid #e7eef6}
 </style>
 </head>
 <body>
@@ -98,15 +110,52 @@
   </footer>
 </section>
 
+<!-- نافذة التفاصيل -->
+<div id="detailOverlay" onclick="overlayBgClick(event)">
+  <div class="detail-card" id="detailCard">
+    <div class="detail-img"><img id="d_img" alt=""></div>
+    <div>
+      <div class="detail-head">
+        <div>
+          <h3 id="d_name" style="margin:0 0 4px 0"></h3>
+          <div id="d_price" class="muted"></div>
+        </div>
+        <button class="x" onclick="closeDetail()">✕</button>
+      </div>
+
+      <div style="margin-top:8px">
+        <div class="muted" style="margin-bottom:6px">اختر اللون</div>
+        <div id="d_colors" class="colors"></div>
+      </div>
+
+      <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
+        <div class="muted">الكمية:</div>
+        <div class="qty">
+          <button onclick="detailQty(-1)">−</button>
+          <input id="d_qty" type="number" min="1" value="1" onchange="detailSetQty(this.value)">
+          <button onclick="detailQty(1)">+</button>
+        </div>
+      </div>
+
+      <div class="detail-actions">
+        <button class="btn btn-ghost" onclick="closeDetail()">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveDetail()">حفظ في السلة</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   // ————— بيانات المنتجات (بدّلهم بصورك وأسعارك) —————
   const PRODUCTS = [
-    { id:'p1', name:'سماعات بلوتوث P9', price: 2000, img:'https://via.placeholder.com/128', colors:['أسود','أبيض','أزرق'] },
-    { id:'p2', name:'سماعة سلكية Pro',   price: 1500, img:'https://via.placeholder.com/128?text=Wired', colors:['أسود','أبيض','أزرق'] },
-    { id:'p3', name:'باوربانك 10000mAh',  price: 3200, img:'https://via.placeholder.com/128?text=Power', colors:['أسود','أبيض'] }
+    { id:'p1', name:'سماعات بلوتوث P9', price: 2000, img:'https://via.placeholder.com/256?text=P9', colors:['أسود','أبيض','أزرق'] },
+    { id:'p2', name:'سماعة سلكية Pro',   price: 1500, img:'https://via.placeholder.com/256?text=Wired', colors:['أسود','أبيض','أزرق'] },
+    { id:'p3', name:'باوربانك 10000mAh',  price: 3200, img:'https://via.placeholder.com/256?text=Power', colors:['أسود','أبيض'] }
   ];
+
   // حالة محلية
   let cart = {}; // {id: {qty,color}}
+  let detail = { id:null, color:null, qty:1 }; // حالة نافذة التفاصيل
 
   const fmt = n => `${Number(n).toLocaleString('ar-DZ')} دج`;
   const $  = s => document.querySelector(s);
@@ -121,33 +170,23 @@
       const el = document.createElement('div');
       el.className='product';
       el.innerHTML = `
-        <div class="pimg"><img src="${p.img}" alt="${p.name}"></div>
-        <div style="flex:1;min-width:0">
-          <h4 class="title">${p.name}</h4>
-          <div class="muted">${fmt(p.price)}</div>
-          <div class="colors" id="cl-${p.id}"></div>
-          <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
-            <div class="muted">الكمية:</div>
-            <div class="qty">
-              <button onclick="chgQty('${p.id}',-1)">−</button>
-              <input id="q-${p.id}" type="number" min="0" value="${qty}" onchange="setQty('${p.id}', this.value)">
-              <button onclick="chgQty('${p.id}',1)">+</button>
-            </div>
+        <div class="click" onclick="openDetail('${p.id}')">
+          <div class="pimg"><img src="${p.img}" alt="${p.name}"></div>
+          <div style="flex:1;min-width:0">
+            <h4 class="title">${p.name}</h4>
+            <div class="muted">${fmt(p.price)}</div>
+          </div>
+        </div>
+        <div>
+          <div class="muted" style="margin-bottom:6px;text-align:center">${chosen}</div>
+          <div class="qty">
+            <button onclick="chgQty('${p.id}',-1)">−</button>
+            <input id="q-${p.id}" type="number" min="0" value="${qty}" onchange="setQty('${p.id}', this.value)">
+            <button onclick="chgQty('${p.id}',1)">+</button>
           </div>
         </div>
       `;
       wrap.appendChild(el);
-      // أزرار الألوان
-      const cl = $(`#cl-${p.id}`);
-      p.colors.forEach(c=>{
-        const d = document.createElement('div'); d.className='dot'; d.title=c;
-        // ألوان تقريبية:
-        d.style.background = c.includes('أزرق') ? '#1e40af' : c.includes('أسود') ? '#111' : '#fff';
-        if(c==='أبيض') d.style.border='1px solid #e5eaf1';
-        if(c===chosen) d.classList.add('sel');
-        d.onclick = ()=>{ setColor(p.id,c); };
-        cl.appendChild(d);
-      });
     });
   }
 
@@ -173,14 +212,60 @@
     $('#grand').textContent    = fmt(subtotal+delivery);
   }
 
+  // ====== نافذة التفاصيل ======
+  function colorToCss(name){
+    if(name.includes('أزرق')) return '#1e40af';
+    if(name.includes('أسود')) return '#111';
+    if(name.includes('أبيض')) return '#fff';
+    return '#eee';
+  }
+
+  function openDetail(id){
+    const p = PRODUCTS.find(x=>x.id===id);
+    detail.id = id;
+    detail.color = cart[id]?.color || p.colors[0];
+    detail.qty   = Math.max(1, cart[id]?.qty || 1);
+
+    $('#d_img').src   = p.img;
+    $('#d_name').textContent = p.name;
+    $('#d_price').textContent = fmt(p.price);
+    $('#d_qty').value = detail.qty;
+
+    const cw = $('#d_colors'); cw.innerHTML='';
+    p.colors.forEach(col=>{
+      const d = document.createElement('div');
+      d.className = 'dot' + (col===detail.color ? ' sel' : '');
+      d.style.background = colorToCss(col);
+      if(col==='أبيض') d.style.border='1px solid #e5eaf1';
+      d.title = col;
+      d.onclick = ()=>{ detail.color = col; openDetail(id); }; // إعادة رسم لتحديث sel
+      cw.appendChild(d);
+    });
+
+    $('#detailOverlay').style.display='flex';
+  }
+
+  function closeDetail(){ $('#detailOverlay').style.display='none'; }
+  function overlayBgClick(e){ if(e.target.id==='detailOverlay') closeDetail(); }
+  function detailQty(delta){ const v = Math.max(1, Number($('#d_qty').value||1) + delta); $('#d_qty').value=v; detail.qty=v; }
+  function detailSetQty(v){ detail.qty = Math.max(1, Number(v||1)); }
+
+  function saveDetail(){
+    const id = detail.id;
+    if(!id) return;
+    cart[id] = { qty: detail.qty, color: detail.color };
+    closeDetail();
+    renderProducts();
+    renderCart();
+  }
+
+  // ====== إرسال الطلب للخادم → Telegram ======
   async function sendOrder(){
-    // تحقق بسيط
     const name = $('#cust_name').value.trim();
     const phone= $('#cust_phone').value.trim();
     const addr = $('#cust_addr').value.trim();
     if(!name || !phone || !addr){ alert('من فضلك املأ كل معلومات الزبون.'); return; }
 
-    // بناء الطلب
     const items = Object.entries(cart)
       .filter(([_,v])=> (v.qty||0)>0)
       .map(([id,v])=>{
@@ -189,21 +274,15 @@
       });
     if(items.length===0){ alert('سلتك فارغة.'); return; }
 
-    const payload = {
-      shop: 'YUBIX STORE',
-      customer: { name, phone, address: addr },
-      items
-    };
+    const payload = { shop:'YUBIX STORE', customer:{ name, phone, address: addr }, items };
 
     try{
-      // NOTE: إذا استضفت الخادم في Netlify Function غيّر المسار إلى: '/.netlify/functions/send-order'
       const res = await fetch('/api/send-order', {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
       });
       if(!res.ok) throw new Error('send failed');
       alert('✅ تم إرسال طلبك! سنقوم بالتواصل معك.');
-      // تفريغ السلة
       cart = {}; renderProducts(); renderCart();
       $('#cust_name').value=''; $('#cust_phone').value=''; $('#cust_addr').value='';
     }catch(e){
@@ -213,6 +292,5 @@
 </script>
 </body>
 </html>
-
 
 
