@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>متجري</title>
+  <title>متجر Yubix</title>
   <style>
     body {
       font-family: Tahoma, sans-serif;
@@ -13,7 +13,13 @@
       background: #007bff;
       color: #fff;
       padding: 15px;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    header img {
+      height: 40px;
     }
     .products {
       display: grid;
@@ -27,6 +33,11 @@
       border-radius: 8px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .product:hover {
+      transform: scale(1.05);
     }
     .product img {
       width: 100%;
@@ -41,15 +52,69 @@
       text-align: center;
     }
     footer a {
-      color: #00aced;
+      color: #fff;
       margin: 0 10px;
       text-decoration: none;
+      font-size: 20px;
+    }
+    footer a:hover {
+      color: #00aced;
+    }
+
+    /* نافذة المنتج */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 90%;
+    }
+    .modal-content img {
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .close {
+      float: left;
+      font-size: 22px;
+      cursor: pointer;
+      color: red;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin: 6px 0;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    button:hover {
+      background: #0056b3;
     }
   </style>
 </head>
 <body>
 
   <header>
+    <img src="images/logo.png" alt="Logo">
     <h1>متجر Yubix</h1>
   </header>
 
@@ -60,67 +125,112 @@
 
   <footer>
     <p>تابعنا على:</p>
-    <a id="linkInsta" href="#" target="_blank">Instagram</a>
-    <a id="linkTiktok" href="#" target="_blank">TikTok</a>
-    <a id="linkFb" href="#" target="_blank">Facebook</a>
-    <a id="linkTg" href="#" target="_blank">Telegram</a>
+    <a href="https://instagram.com/" target="_blank">📷</a>
+    <a href="https://tiktok.com/" target="_blank">🎵</a>
+    <a href="https://facebook.com/" target="_blank">📘</a>
+    <a href="https://t.me/" target="_blank">✈️</a>
   </footer>
 
-<script>
-  // ⚙️ هنا تحط الإعدادات تاعك
-  const config = {
-    socials: {
-      insta: "https://instagram.com/yourpage",
-      tiktok: "https://tiktok.com/@yourpage",
-      fb: "https://facebook.com/yourpage",
-      tg: "https://t.me/yourpage"
-    },
-    products: [
-      {
-        name: "سماعات Yubix",
-        price: "2500 دج",
-        img: "images/headphones.jpg"
-      },
-      {
-        name: "شاحن سريع",
-        price: "1200 دج",
-        img: "images/charger.jpg"
-      },
-      {
-        name: "كابل USB-C",
-        price: "600 دج",
-        img: "images/cable.jpg"
-      }
-    ]
-  };
+  <!-- نافذة المنتج -->
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <img id="modalImg" src="">
+      <h3 id="modalName"></h3>
+      <p id="modalPrice"></p>
+      <label>إختر اللون:</label>
+      <select id="modalColor"></select>
+      <label>الكمية:</label>
+      <input type="number" id="modalQty" value="1" min="1">
+      <label>اسمك:</label>
+      <input type="text" id="buyerName">
+      <label>رقم الهاتف:</label>
+      <input type="text" id="buyerPhone">
+      <label>العنوان:</label>
+      <input type="text" id="buyerAddress">
+      <button onclick="placeOrder()">تأكيد الطلبية</button>
+    </div>
+  </div>
 
-  // 🛒 عرض المنتجات
+<script>
+  // المنتجات
+  const products = [
+    {
+      name: "سماعات Yubix",
+      price: "2500 دج",
+      img: "images/headphones.jpg",
+      colors: ["أسود", "أبيض", "أحمر"]
+    },
+    {
+      name: "شاحن سريع",
+      price: "1200 دج",
+      img: "images/charger.jpg",
+      colors: ["أسود", "أبيض"]
+    },
+    {
+      name: "كابل USB-C",
+      price: "600 دج",
+      img: "images/cable.jpg",
+      colors: ["أسود"]
+    }
+  ];
+
+  const orders = []; // هنا يتخزنوا الطلبات
+
+  // عرض المنتجات
   function renderProducts() {
     const container = document.getElementById("products");
     container.innerHTML = "";
-    config.products.forEach(p => {
+    products.forEach((p, index) => {
       container.innerHTML += `
-        <div class="product">
+        <div class="product" onclick="openModal(${index})">
           <img src="${p.img}" alt="${p.name}">
           <h3>${p.name}</h3>
           <p>${p.price}</p>
-          <button>أضف للسلة</button>
         </div>
       `;
     });
   }
 
-  // 🔗 الروابط
-  function setLinks() {
-    document.getElementById("linkInsta").href = config.socials.insta || "#";
-    document.getElementById("linkTiktok").href = config.socials.tiktok || "#";
-    document.getElementById("linkFb").href = config.socials.fb || "#";
-    document.getElementById("linkTg").href = config.socials.tg || "#";
+  // فتح النافذة
+  function openModal(index) {
+    const p = products[index];
+    document.getElementById("modalImg").src = p.img;
+    document.getElementById("modalName").innerText = p.name;
+    document.getElementById("modalPrice").innerText = p.price;
+    const colorSelect = document.getElementById("modalColor");
+    colorSelect.innerHTML = "";
+    p.colors.forEach(c => {
+      colorSelect.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+    document.getElementById("productModal").style.display = "flex";
+    document.getElementById("productModal").setAttribute("data-index", index);
   }
 
-  // 🚀 تشغيل
+  // غلق النافذة
+  function closeModal() {
+    document.getElementById("productModal").style.display = "none";
+  }
+
+  // حفظ الطلب
+  function placeOrder() {
+    const index = document.getElementById("productModal").getAttribute("data-index");
+    const p = products[index];
+    const order = {
+      product: p.name,
+      color: document.getElementById("modalColor").value,
+      qty: document.getElementById("modalQty").value,
+      name: document.getElementById("buyerName").value,
+      phone: document.getElementById("buyerPhone").value,
+      address: document.getElementById("buyerAddress").value
+    };
+    orders.push(order);
+    alert("✅ تم تسجيل الطلبية!");
+    console.log("الطلبات:", orders); // تبان الطلبات في Console
+    closeModal();
+  }
+
   renderProducts();
-  setLinks();
 </script>
 
 </body>
