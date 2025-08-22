@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تفاصيل المنتج</title>
+  <style>
+    body {font-family: Arial; margin:0; background:#f9fafb; padding:20px;}
+    .card {background:white; padding:20px; border-radius:12px; max-width:400px; margin:auto; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    img {width:100%; border-radius:10px;}
+    input, select {width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;}
+    button {width:100%; background:#0f766e; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div class="card" id="detail"></div>
+
+  <script>
+    let products = JSON.parse(localStorage.getItem("products")) || [];
+    let id = localStorage.getItem("selectedProduct");
+    let product = products.find(p=>p.id==id);
+
+    let div=document.getElementById("detail");
+    div.innerHTML=`
+      <img src="${product.img}" alt="${product.name}">
+      <h2>${product.name}</h2>
+      <p>السعر: ${product.price} دج</p>
+      <label>اختر اللون</label>
+      <select id="color">${product.colors.map(c=>`<option>${c}</option>`).join("")}</select>
+      <input type="text" id="name" placeholder="اسمك الكامل">
+      <input type="text" id="phone" placeholder="رقم الهاتف">
+      <input type="text" id="address" placeholder="العنوان">
+      <button onclick="addToCart()">أضف للسلة</button>
+    `;
+
+    function addToCart(){
+      let order = JSON.parse(localStorage.getItem("orders")) || [];
+      order.push({
+        product: product.name,
+        color: document.getElementById("color").value,
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value
+      });
+      localStorage.setItem("orders", JSON.stringify(order));
+      alert("تمت إضافة الطلب ✅");
+      window.location="index.html";
+    }
+  </script>
+</body>
+</html>
