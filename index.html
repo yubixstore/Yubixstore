@@ -2,220 +2,104 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>yubix store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>yubix store — متجر الإكسسوارات</title>
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8f8f8;
+    body { font-family: Arial, sans-serif; margin: 0; background: #f9fafb; color:#222;}
+    header {background:#0f766e; color:white; padding:15px; text-align:center; font-size:20px; font-weight:bold;}
+    .splash {
+      position: fixed; inset:0; background:#0f766e; color:white; display:flex;
+      flex-direction:column; align-items:center; justify-content:center; z-index:9999;
     }
-    /* واجهة البداية */
-    #welcome {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: linear-gradient(135deg, #ff6600, #ff9900);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      z-index: 1000;
-      color: white;
+    .splash h1 {font-size:32px; margin-bottom:10px;}
+    .splash img {width:100px; margin-bottom:20px;}
+    .splash button {
+      padding:10px 20px; font-size:16px; background:white; color:#0f766e;
+      border:none; border-radius:8px; cursor:pointer;
     }
-    #welcome h1 {
-      font-size: 40px;
-      margin-bottom: 20px;
+    .container {display:flex; gap:20px; padding:20px;}
+    .products {flex:3;}
+    .cart {flex:1; background:#fff; padding:15px; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);}
+    .card {
+      background:white; border-radius:12px; box-shadow:0 2px 6px rgba(0,0,0,0.1);
+      padding:15px; margin-bottom:15px; text-align:center;
     }
-    #welcome button {
-      padding: 12px 25px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      background: white;
-      color: #ff6600;
-      cursor: pointer;
-      font-weight: bold;
+    .card img {width:100%; border-radius:10px;}
+    .card h3 {margin:10px 0;}
+    .card button {
+      background:#0f766e; color:white; padding:8px 14px; border:none;
+      border-radius:6px; cursor:pointer;
     }
-
-    header {
-      background: #ff6600;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    header img {
-      height: 50px;
-      display: block;
-      margin: 0 auto 10px auto;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-    .product {
-      background: white;
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .product:hover {
-      transform: scale(1.05);
-    }
-    .product img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    /* نافذة التفاصيل */
-    .modal {
-      display: none;
-      position: fixed;
-      top:0; left:0; right:0; bottom:0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      width: 350px;
-      text-align: center;
-    }
-    .modal-content img {
-      width: 100%;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    .modal-content input, .modal-content select {
-      width: 90%;
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-    .close {
-      float: left;
-      font-size: 20px;
-      cursor: pointer;
-      color: red;
-    }
-    button {
-      background: #ff6600;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin-top: 10px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    footer {
-      background: #333;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      margin-top: 30px;
-    }
-    .socials a {
-      margin: 0 10px;
-      color: white;
-      text-decoration: none;
-      font-weight: bold;
+    footer {text-align:center; padding:20px; margin-top:30px; background:#fff; border-top:1px solid #ddd;}
+    footer p {margin-bottom:10px;}
+    footer a {
+      margin:0 8px; text-decoration:none; padding:6px 12px; border-radius:6px;
+      background:#0f766e; color:white; font-size:14px;
     }
   </style>
 </head>
 <body>
 
-  <!-- واجهة البداية -->
-  <div id="welcome">
-    <h1>مرحبا بكم في متجري</h1>
+  <!-- شاشة ترحيب -->
+  <div class="splash" id="splash">
+    <img src="logo.png" alt="شعار المتجر">
+    <h1>yubix store</h1>
+    <p>مرحبا بكم في متجر الإكسسوارات</p>
     <button onclick="enterStore()">ادخل للمتجر</button>
   </div>
 
-  <!-- الهيدر + لوجو -->
-  <header>
-    <img src="logo.png" alt="photo_2025-08-21_13-08-52.jpg">
-    <h2>yubix store</h2>
-  </header>
+  <!-- الهيدر -->
+  <header>yubix — متجر الإكسسوارات</header>
 
-  <!-- المنتجات -->
-  <section class="products">
-    <div class="product" onclick="openModal('product1.jpg','سماعات بلوتوث', '2500 دج')">
-      <img src="product1.jpg" alt="منتج 1">
-      <h3>سماعات بلوتوث</h3>
+  <div class="container">
+    <!-- قائمة المنتجات -->
+    <div class="products" id="products">
+      <div class="card">
+        <img src="product1.jpg" alt="منتج">
+        <h3>سماعات بلوتوث</h3>
+        <p>السعر: 2500 دج</p>
+        <button onclick="addToCart('سماعات بلوتوث', 2500)">أضف للسلة</button>
+      </div>
+      <div class="card">
+        <img src="product2.jpg" alt="منتج">
+        <h3>كابل شحن</h3>
+        <p>السعر: 500 دج</p>
+        <button onclick="addToCart('كابل شحن', 500)">أضف للسلة</button>
+      </div>
     </div>
-    <div class="product" onclick="openModal('product2.jpg','كابل USB', '500 دج')">
-      <img src="product2.jpg" alt="منتج 2">
-      <h3>كابل USB</h3>
-    </div>
-    <div class="product" onclick="openModal('product3.jpg','جراب هاتف', '1200 دج')">
-      <img src="product3.jpg" alt="منتج 3">
-      <h3>جراب هاتف</h3>
-    </div>
-  </section>
 
-  <!-- نافذة التفاصيل -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal()">×</span>
-      <img id="modalImg" src="">
-      <h3 id="modalTitle"></h3>
-      <p id="modalPrice"></p>
-      <label>اختر اللون:</label>
-      <select>
-        <option>أسود</option>
-        <option>أبيض</option>
-        <option>أحمر</option>
-        <option>أزرق</option>
-      </select>
-      <label>الكمية:</label>
-      <input type="number" min="1" value="1">
-      <label>الاسم:</label>
-      <input type="text" placeholder="اسمك">
-      <label>رقم الهاتف:</label>
-      <input type="text" placeholder="رقم الهاتف">
-      <label>العنوان:</label>
-      <input type="text" placeholder="العنوان">
-      <button onclick="alert('تم تسجيل طلبك ✅')">تأكيد الطلب</button>
+    <!-- السلة -->
+    <div class="cart">
+      <h3>سلتك</h3>
+      <ul id="cartItems"></ul>
+      <p>الإجمالي: <span id="total">0</span> دج</p>
+      <button style="background:#dc2626;color:white;padding:8px 14px;border:none;border-radius:6px;">إرسال عبر واتساب</button>
     </div>
   </div>
 
   <!-- الفوتر -->
   <footer>
-    <p>شكرا على زيارتكم 💖</p>
-    <div class="socials">
-      <a href="#">Instagram</a>
-      <a href="#">TikTok</a>
-      <a href="#">Facebook</a>
-      <a href="#">Telegram</a>
-    </div>
+    <p>شكراً على زيارتكم ❤ تابعونا على مواقع التواصل الاجتماعي</p>
+    <a href="#">إنستغرام</a>
+    <a href="#">تيك توك</a>
+    <a href="#">فيسبوك</a>
+    <a href="#">تلغرام</a>
   </footer>
 
   <script>
-    function enterStore() {
-      document.getElementById('welcome').style.display = 'none';
+    function enterStore(){
+      document.getElementById('splash').style.display = 'none';
     }
 
-    function openModal(img, title, price) {
-      document.getElementById('modal').style.display = 'flex';
-      document.getElementById('modalImg').src = img;
-      document.getElementById('modalTitle').innerText = title;
-      document.getElementById('modalPrice').innerText = price;
-    }
-
-    function closeModal() {
-      document.getElementById('modal').style.display = 'none';
+    let total = 0;
+    function addToCart(product, price){
+      let cart = document.getElementById('cartItems');
+      let li = document.createElement('li');
+      li.textContent = product + " - " + price + " دج";
+      cart.appendChild(li);
+      total += price;
+      document.getElementById('total').textContent = total;
     }
   </script>
 </body>
 </html>
-
-
-
