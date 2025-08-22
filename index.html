@@ -1,149 +1,218 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>متجر Yubix</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>YUBIX STORE</title>
+<style>
+  :root{--blue:#0d47a1;--black:#0a0a0a;--bg:#f4f6fb;--card:#fff;--muted:#64748b;--accent:#0d47a1}
+  *{box-sizing:border-box} body{margin:0;font-family:"Tajawal",system-ui,Arial;background:var(--bg);color:#0b1220}
+  /* Welcome */
+  #welcome{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,var(--black),var(--blue));color:#fff;text-align:center;padding:24px}
+  .wel{max-width:560px}
+  .logo{width:100px;height:100px;border-radius:24px;background:#fff;display:inline-grid;place-items:center;color:var(--blue);font-weight:800;font-size:28px;margin-bottom:12px}
+  .btn{border:0;border-radius:12px;padding:14px 22px;cursor:pointer;font-weight:800}
+  .btn-primary{background:#fff;color:var(--blue)}
+  .btn-primary:hover{opacity:.92}
+  /* Store */
+  #store{display:none;padding:18px;max-width:1000px;margin:0 auto}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .brand{display:flex;gap:10px;align-items:center}
+  .brand .mini-logo{width:36px;height:36px;border-radius:10px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900}
+  .card{background:var(--card);border:1px solid #e7eef6;border-radius:16px;box-shadow:0 8px 24px rgba(2,6,23,.05)}
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  @media(max-width:900px){.grid{grid-template-columns:1fr}}
+  .products{display:grid;gap:10px}
+  .product{display:flex;gap:12px;align-items:center;padding:12px;border-radius:14px;border:1px solid #eef2f7}
+  .pimg{width:66px;height:66px;border-radius:14px;background:#eef2f7;overflow:hidden;display:grid;place-items:center}
+  .pimg img{width:100%;height:100%;object-fit:cover}
+  .title{margin:0;font-weight:800}
+  .muted{color:var(--muted);font-size:13px}
+  .colors{display:flex;gap:6px;margin-top:6px}
+  .dot{width:24px;height:24px;border-radius:999px;border:2px solid #fff;box-shadow:0 1px 2px rgba(0,0,0,.12);cursor:pointer}
+  .dot.sel{outline:3px solid rgba(13,71,161,.25)}
+  .qty{display:inline-flex;align-items:center;border:1px solid #dbe4f0;border-radius:999px;overflow:hidden}
+  .qty button{width:34px;height:34px;border:0;background:#fff;cursor:pointer;font-size:18px}
+  .qty input{width:56px;text-align:center;border:0;outline:none;height:34px}
+  aside .card{padding:14px}
+  .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
+  .btn-full{width:100%;background:var(--accent);color:#fff}
+  .sep{border:none;border-top:1px solid #eef2f6;margin:10px 0}
+  footer{text-align:center;color:#5b6b82;margin:22px 0}
+  footer .socials{display:flex;gap:10px;justify-content:center;margin-top:6px}
+  footer .socials a{padding:8px 10px;border:1px solid #e6edf6;background:#fff;border-radius:10px;text-decoration:none;color:#0b1220}
+</style>
 </head>
 <body>
-  <div id="welcome">
-    <h1>🛍️ Yubix Store</h1>
-    <button onclick="enterStore()">ادخل للمتجر</button>
-  </div>
 
-  <div id="store" style="display:none;">
-    <h2>المنتجات</h2>
-    <div id="products"></div>
+<!-- واجهة ترحيبية -->
+<section id="welcome">
+  <div class="wel">
+    <div class="logo">Y</div>
+    <h1 style="margin:8px 0 4px 0">YUBIX STORE</h1>
+    <div style="opacity:.9;margin-bottom:14px">مرحبا بك! اختَر منتجاتك المفضلة، ألوان متعددة وبسعر مناسب.</div>
+    <button class="btn btn-primary" onclick="enterStore()">ادخل للمتجر</button>
   </div>
+</section>
 
-  <!-- نافذة تفاصيل المنتج -->
-  <div id="productModal" class="modal">
-    <div class="modal-content">
-      <span onclick="closeModal()" class="close">&times;</span>
-      <h3 id="modalProductName"></h3>
-      <form id="orderForm">
-        <label>اللون:</label>
-        <input type="text" id="color"><br>
-        <label>الكمية:</label>
-        <input type="number" id="quantity" min="1" value="1"><br>
-        <label>اسمك:</label>
-        <input type="text" id="name"><br>
-        <label>الهاتف:</label>
-        <input type="text" id="phone"><br>
-        <label>العنوان:</label>
-        <textarea id="address"></textarea><br>
-        <button type="submit">تأكيد الطلب</button>
-      </form>
+<!-- المتجر -->
+<section id="store">
+  <header>
+    <div class="brand"><div class="mini-logo">Y</div><div><div style="font-weight:900">YUBIX STORE</div><div class="muted">ألوان: أزرق • أسود • أبيض</div></div></div>
+    <div class="muted">الدفع عند الاستلام</div>
+  </header>
+
+  <div class="grid">
+    <!-- يسار: المنتجات -->
+    <div class="card" style="padding:12px">
+      <h3 style="margin:6px 8px 12px 8px">المنتجات</h3>
+      <div id="products" class="products"></div>
     </div>
+
+    <!-- يمين: السلة + بيانات الزبون -->
+    <aside>
+      <div class="card">
+        <h3 style="margin:0 0 8px 0">سلتك</h3>
+        <div id="cart"></div>
+        <div class="row"><div class="muted">المجموع</div><div id="subtotal">0 دج</div></div>
+        <div class="row"><div class="muted">التوصيل</div><div id="delivery">200 دج</div></div>
+        <div class="row" style="font-weight:900"><div>الإجمالي</div><div id="grand">0 دج</div></div>
+        <hr class="sep">
+        <div class="muted" style="margin-bottom:6px">معلومات الزبون</div>
+        <input class="card" id="cust_name" placeholder="الاسم الكامل" style="width:100%;padding:10px;margin-bottom:8px">
+        <input class="card" id="cust_phone" placeholder="الهاتف" style="width:100%;padding:10px;margin-bottom:8px">
+        <textarea class="card" id="cust_addr" placeholder="العنوان بالتفصيل" style="width:100%;padding:10px;height:80px"></textarea>
+        <button class="btn btn-full" style="margin-top:10px" onclick="sendOrder()">تأكيد وإرسال الطلب</button>
+      </div>
+    </aside>
   </div>
 
   <footer>
-    <p>شكرا على الزيارة 💖 تابعونا على مواقع التواصل الاجتماعي</p>
+    <div>شكرا على زيارتكم ❤ — تابعونا على مواقع التواصل</div>
+    <div class="socials">
+      <a href="#" target="_blank">📸 إنستغرام</a>
+      <a href="#" target="_blank">🎵 تيك توك</a>
+      <a href="#" target="_blank">📘 فايسبوك</a>
+      <a href="#" target="_blank">✈️ تيليغرام</a>
+    </div>
   </footer>
+</section>
 
-  <script src="script.js"></script>
+<script>
+  // ————— بيانات المنتجات (بدّلهم بصورك وأسعارك) —————
+  const PRODUCTS = [
+    { id:'p1', name:'سماعات بلوتوث P9', price: 2000, img:'https://via.placeholder.com/128', colors:['أسود','أبيض','أزرق'] },
+    { id:'p2', name:'سماعة سلكية Pro',   price: 1500, img:'https://via.placeholder.com/128?text=Wired', colors:['أسود','أبيض','أزرق'] },
+    { id:'p3', name:'باوربانك 10000mAh',  price: 3200, img:'https://via.placeholder.com/128?text=Power', colors:['أسود','أبيض'] }
+  ];
+  // حالة محلية
+  let cart = {}; // {id: {qty,color}}
+
+  const fmt = n => `${Number(n).toLocaleString('ar-DZ')} دج`;
+  const $  = s => document.querySelector(s);
+
+  function enterStore(){ $('#welcome').style.display='none'; $('#store').style.display='block'; renderProducts(); renderCart(); }
+
+  function renderProducts(){
+    const wrap = $('#products'); wrap.innerHTML='';
+    PRODUCTS.forEach(p=>{
+      const chosen = (cart[p.id]?.color) || p.colors[0];
+      const qty    = (cart[p.id]?.qty)||0;
+      const el = document.createElement('div');
+      el.className='product';
+      el.innerHTML = `
+        <div class="pimg"><img src="${p.img}" alt="${p.name}"></div>
+        <div style="flex:1;min-width:0">
+          <h4 class="title">${p.name}</h4>
+          <div class="muted">${fmt(p.price)}</div>
+          <div class="colors" id="cl-${p.id}"></div>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:8px">
+            <div class="muted">الكمية:</div>
+            <div class="qty">
+              <button onclick="chgQty('${p.id}',-1)">−</button>
+              <input id="q-${p.id}" type="number" min="0" value="${qty}" onchange="setQty('${p.id}', this.value)">
+              <button onclick="chgQty('${p.id}',1)">+</button>
+            </div>
+          </div>
+        </div>
+      `;
+      wrap.appendChild(el);
+      // أزرار الألوان
+      const cl = $(`#cl-${p.id}`);
+      p.colors.forEach(c=>{
+        const d = document.createElement('div'); d.className='dot'; d.title=c;
+        // ألوان تقريبية:
+        d.style.background = c.includes('أزرق') ? '#1e40af' : c.includes('أسود') ? '#111' : '#fff';
+        if(c==='أبيض') d.style.border='1px solid #e5eaf1';
+        if(c===chosen) d.classList.add('sel');
+        d.onclick = ()=>{ setColor(p.id,c); };
+        cl.appendChild(d);
+      });
+    });
+  }
+
+  function setColor(id,c){ cart[id] = { qty:(cart[id]?.qty||0), color:c }; renderProducts(); renderCart(); }
+  function chgQty(id,delta){ setQty(id, Math.max(0,(cart[id]?.qty||0)+delta)); }
+  function setQty(id,v){ const qty=Math.max(0,Number(v||0)); const color = cart[id]?.color || PRODUCTS.find(x=>x.id===id).colors[0]; cart[id]={qty,color}; renderCart(); }
+
+  function renderCart(){
+    const c = $('#cart'); c.innerHTML='';
+    let subtotal = 0;
+    Object.entries(cart).forEach(([id,{qty,color}])=>{
+      if(qty>0){
+        const p = PRODUCTS.find(x=>x.id===id);
+        const line = document.createElement('div'); line.className='row';
+        const linePrice = p.price*qty; subtotal += linePrice;
+        line.innerHTML = `<div>${p.name} ${color?`(${color})`:''} × ${qty}</div><div>${fmt(linePrice)}</div>`;
+        c.appendChild(line);
+      }
+    });
+    const delivery = subtotal>0 ? 200 : 0;
+    $('#subtotal').textContent = fmt(subtotal);
+    $('#delivery').textContent = fmt(delivery);
+    $('#grand').textContent    = fmt(subtotal+delivery);
+  }
+
+  async function sendOrder(){
+    // تحقق بسيط
+    const name = $('#cust_name').value.trim();
+    const phone= $('#cust_phone').value.trim();
+    const addr = $('#cust_addr').value.trim();
+    if(!name || !phone || !addr){ alert('من فضلك املأ كل معلومات الزبون.'); return; }
+
+    // بناء الطلب
+    const items = Object.entries(cart)
+      .filter(([_,v])=> (v.qty||0)>0)
+      .map(([id,v])=>{
+        const p = PRODUCTS.find(x=>x.id===id);
+        return { id, name:p.name, price:p.price, qty:v.qty, color:v.color };
+      });
+    if(items.length===0){ alert('سلتك فارغة.'); return; }
+
+    const payload = {
+      shop: 'YUBIX STORE',
+      customer: { name, phone, address: addr },
+      items
+    };
+
+    try{
+      // NOTE: إذا استضفت الخادم في Netlify Function غيّر المسار إلى: '/.netlify/functions/send-order'
+      const res = await fetch('/api/send-order', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) throw new Error('send failed');
+      alert('✅ تم إرسال طلبك! سنقوم بالتواصل معك.');
+      // تفريغ السلة
+      cart = {}; renderProducts(); renderCart();
+      $('#cust_name').value=''; $('#cust_phone').value=''; $('#cust_addr').value='';
+    }catch(e){
+      alert('❌ فشل الإرسال. تأكد أن الخادم شغال والمسار صحيح.');
+    }
+  }
+</script>
 </body>
 </html>
-// ===== إعدادات تليقرام =====
-const BOT_TOKEN = "توكن_البوت";
-const CHAT_ID = "CHAT_ID";
-
-// المنتجات (تتخزن محليا)
-let products = JSON.parse(localStorage.getItem("products")) || [];
-
-// عرض المنتجات
-function renderProducts() {
-  const container = document.getElementById("products");
-  if (!container) return;
-  container.innerHTML = "";
-  products.forEach((p, i) => {
-    container.innerHTML += `
-      <div class="product">
-        <img src="${p.image}" alt="${p.name}">
-        <h3>${p.name}</h3>
-        <button onclick="openProduct(${i})">شراء</button>
-      </div>
-    `;
-  });
-}
-
-// فتح المتجر
-function enterStore() {
-  document.getElementById("welcome").style.display = "none";
-  document.getElementById("store").style.display = "block";
-  renderProducts();
-}
-
-// فتح منتج
-function openProduct(index) {
-  const modal = document.getElementById("productModal");
-  modal.style.display = "block";
-  document.getElementById("modalProductName").textContent = products[index].name;
-  document.getElementById("orderForm").onsubmit = (e) => {
-    e.preventDefault();
-    sendOrderToTelegram(products[index].name);
-    closeModal();
-  };
-}
-
-// غلق نافذة
-function closeModal() {
-  document.getElementById("productModal").style.display = "none";
-}
-
-// إرسال الطلب
-function sendOrderToTelegram(productName) {
-  const order = {
-    product: productName,
-    color: document.getElementById("color").value,
-    quantity: document.getElementById("quantity").value,
-    name: document.getElementById("name").value,
-    phone: document.getElementById("phone").value,
-    address: document.getElementById("address").value
-  };
-
-  const message = `
-🛒 طلب جديد
--------------------
-📦 المنتج: ${order.product}
-🎨 اللون: ${order.color}
-🔢 الكمية: ${order.quantity}
-👤 الاسم: ${order.name}
-📞 الهاتف: ${order.phone}
-🏠 العنوان: ${order.address}
-`;
-
-  fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: CHAT_ID, text: message })
-  });
-  alert("✅ تم إرسال طلبك بنجاح!");
-}
-
-// إضافة منتج جديد
-const form = document.getElementById("addProductForm");
-if (form) {
-  form.onsubmit = (e) => {
-    e.preventDefault();
-    const name = document.getElementById("productName").value;
-    const image = document.getElementById("productImage").value;
-    products.push({ name, image });
-    localStorage.setItem("products", JSON.stringify(products));
-    alert("✅ تمت إضافة المنتج!");
-  };
-}
-body { font-family: Arial, sans-serif; direction: rtl; text-align: center; background: #f7f7f7; }
-h1, h2 { color: #333; }
-.product { display: inline-block; margin: 15px; padding: 10px; border: 1px solid #ccc; border-radius: 10px; background: white; }
-.product img { width: 150px; height: 150px; object-fit: cover; border-radius: 10px; }
-button { background: #0077cc; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; }
-button:hover { background: #005fa3; }
-.modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.6); }
-.modal-content { background: white; margin: 10% auto; padding: 20px; width: 300px; border-radius: 10px; }
-.close { float: right; cursor: pointer; }
-footer { margin-top: 30px; background: #222; color: white; padding: 10px; }
-
 
 
 
