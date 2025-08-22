@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة المدير</title>
+  <style>
+    body {font-family: Arial; background:#f9fafb; padding:20px;}
+    .card {background:white; padding:20px; border-radius:12px; max-width:400px; margin:auto;}
+    input, textarea {width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:6px;}
+    button {width:100%; background:#0f766e; color:white; padding:10px; border:none; border-radius:6px; cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div class="card" id="admin">
+    <h2>تسجيل الدخول كمدير</h2>
+    <input type="password" id="pass" placeholder="كلمة السر">
+    <button onclick="login()">دخول</button>
+  </div>
+
+  <script>
+    function login(){
+      let pass=document.getElementById("pass").value;
+      if(pass==="1234"){
+        document.getElementById("admin").innerHTML=`
+          <h2>إضافة منتج جديد</h2>
+          <input id="name" placeholder="اسم المنتج">
+          <input id="price" type="number" placeholder="السعر">
+          <input id="img" placeholder="رابط الصورة (product.jpg)">
+          <textarea id="colors" placeholder="الألوان مفصولة بفواصل (أحمر, أسود, أزرق)"></textarea>
+          <button onclick="addProduct()">إضافة</button>
+        `;
+      }else{
+        alert("كلمة السر خاطئة ❌");
+      }
+    }
+
+    function addProduct(){
+      let products=JSON.parse(localStorage.getItem("products")) || [];
+      let newP={
+        id: Date.now(),
+        name: document.getElementById("name").value,
+        price: document.getElementById("price").value,
+        img: document.getElementById("img").value,
+        colors: document.getElementById("colors").value.split(",")
+      };
+      products.push(newP);
+      localStorage.setItem("products", JSON.stringify(products));
+      alert("تمت الإضافة ✅");
+    }
+  </script>
+</body>
+</html>
