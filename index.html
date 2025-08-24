@@ -32,6 +32,18 @@
   </style>
 </head>
 <body>
+<section id="order" style="padding:30px; background:#f7f7f7;">
+  <h2 style="text-align:center;">📦 اطلب الآن</h2>
+
+  <form id="orderForm" style="max-width:500px; margin:auto; background:white; padding:20px; border-radius:12px;">
+    <input type="text" id="name" placeholder="الاسم الكامل" required>
+    <input type="text" id="phone" placeholder="رقم الهاتف" required>
+    <input type="text" id="address" placeholder="العنوان" required>
+    <input type="text" id="product" placeholder="اسم المنتج" required>
+    <input type="number" id="qty" placeholder="الكمية" required min="1" value="1">
+    <button type="submit">إرسال الطلب</button>
+  </form>
+</section>
 
   <!-- صفحة الترحيب -->
   <div class="welcome" id="welcome">
@@ -123,6 +135,7 @@
 
 </body>
 </html>
+
 
 
 
