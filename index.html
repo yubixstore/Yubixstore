@@ -7,14 +7,12 @@
 <style>
   :root{--blue:#0d47a1;--black:#0a0a0a;--bg:#f4f6fb;--card:#fff;--muted:#64748b;--accent:#0d47a1}
   *{box-sizing:border-box} body{margin:0;font-family:"Tajawal",system-ui,Arial;background:var(--bg);color:#0b1220}
-  /* Welcome */
   #welcome{min-height:100vh;display:grid;place-items:center;background:linear-gradient(135deg,var(--black),var(--blue));color:#fff;text-align:center;padding:24px}
   .wel{max-width:560px}
   .logo{width:100px;height:100px;border-radius:24px;background:#fff;display:inline-grid;place-items:center;color:var(--blue);font-weight:800;font-size:28px;margin-bottom:12px}
   .btn{border:0;border-radius:12px;padding:14px 22px;cursor:pointer;font-weight:800}
   .btn-primary{background:#fff;color:var(--blue)}
   .btn-primary:hover{opacity:.92}
-  /* Store */
   #store{display:none;padding:18px;max-width:1000px;margin:0 auto}
   header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
   .brand{display:flex;gap:10px;align-items:center}
@@ -38,12 +36,10 @@
   aside .card{padding:14px}
   .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
   .btn-full{width:100%;background:var(--accent);color:#fff}
-  .sep{border:none;border-top:1px solid #eef2f6;margin:10px 0}
+  .sep{border:none;border-top:1px solid #eef2f7;margin:10px 0}
   footer{text-align:center;color:#5b6b82;margin:22px 0}
   footer .socials{display:flex;gap:10px;justify-content:center;margin-top:6px}
   footer .socials a{padding:8px 10px;border:1px solid #e6edf6;background:#fff;border-radius:10px;text-decoration:none;color:#0b1220}
-
-  /* ====== Modal (تفاصيل المنتج) ====== */
   #detailOverlay{position:fixed;inset:0;background:rgba(2,6,23,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:40}
   .detail-card{background:#fff;border-radius:18px;max-width:640px;width:100%;display:grid;grid-template-columns:180px 1fr;gap:16px;padding:16px;border:1px solid #e7eef6;box-shadow:0 20px 60px rgba(0,0,0,.2)}
   @media(max-width:640px){.detail-card{grid-template-columns:1fr}}
@@ -122,12 +118,10 @@
         </div>
         <button class="x" onclick="closeDetail()">✕</button>
       </div>
-
       <div style="margin-top:8px">
         <div class="muted" style="margin-bottom:6px">اختر اللون</div>
         <div id="d_colors" class="colors"></div>
       </div>
-
       <div style="margin-top:12px;display:flex;align-items:center;gap:8px">
         <div class="muted">الكمية:</div>
         <div class="qty">
@@ -136,7 +130,6 @@
           <button onclick="detailQty(1)">+</button>
         </div>
       </div>
-
       <div class="detail-actions">
         <button class="btn btn-ghost" onclick="closeDetail()">إلغاء</button>
         <button class="btn btn-primary" onclick="saveDetail()">حفظ في السلة</button>
@@ -146,151 +139,67 @@
 </div>
 
 <script>
-  // ————— بيانات المنتجات (بدّلهم بصورك وأسعارك) —————
+  // منتجات
   const PRODUCTS = [
-    { id:'p1', name:'سماعات بلوتوث P9', price: 2000, img:'https://via.placeholder.com/256?text=P9', colors:['أسود','أبيض','أزرق'] },
-    { id:'p2', name:'سماعة سلكية Pro',   price: 1500, img:'https://via.placeholder.com/256?text=Wired', colors:['أسود','أبيض','أزرق'] },
-    { id:'p3', name:'باوربانك 10000mAh',  price: 3200, img:'https://via.placeholder.com/256?text=Power', colors:['أسود','أبيض'] }
+    { id:'p1', name:'سماعات بلوتوث P9', price:2000, img:'https://via.placeholder.com/256?text=P9', colors:['أسود','أبيض','أزرق'] },
+    { id:'p2', name:'سماعة سلكية Pro', price:1500, img:'https://via.placeholder.com/256?text=Wired', colors:['أسود','أبيض','أزرق'] },
+    { id:'p3', name:'باوربانك 10000mAh', price:3200, img:'https://via.placeholder.com/256?text=Power', colors:['أسود','أبيض'] }
   ];
 
-  // حالة محلية
-  let cart = {}; // {id: {qty,color}}
-  let detail = { id:null, color:null, qty:1 }; // حالة نافذة التفاصيل
+  let cart = {}; 
+  let detail = { id:null, color:null, qty:1 };
 
   const fmt = n => `${Number(n).toLocaleString('ar-DZ')} دج`;
   const $  = s => document.querySelector(s);
 
   function enterStore(){ $('#welcome').style.display='none'; $('#store').style.display='block'; renderProducts(); renderCart(); }
-
-  function renderProducts(){
-    const wrap = $('#products'); wrap.innerHTML='';
-    PRODUCTS.forEach(p=>{
-      const chosen = (cart[p.id]?.color) || p.colors[0];
-      const qty    = (cart[p.id]?.qty)||0;
-      const el = document.createElement('div');
-      el.className='product';
-      el.innerHTML = `
-        <div class="click" onclick="openDetail('${p.id}')">
-          <div class="pimg"><img src="${p.img}" alt="${p.name}"></div>
-          <div style="flex:1;min-width:0">
-            <h4 class="title">${p.name}</h4>
-            <div class="muted">${fmt(p.price)}</div>
-          </div>
-        </div>
-        <div>
-          <div class="muted" style="margin-bottom:6px;text-align:center">${chosen}</div>
-          <div class="qty">
-            <button onclick="chgQty('${p.id}',-1)">−</button>
-            <input id="q-${p.id}" type="number" min="0" value="${qty}" onchange="setQty('${p.id}', this.value)">
-            <button onclick="chgQty('${p.id}',1)">+</button>
-          </div>
-        </div>
-      `;
-      wrap.appendChild(el);
-    });
-  }
-
-  function setColor(id,c){ cart[id] = { qty:(cart[id]?.qty||0), color:c }; renderProducts(); renderCart(); }
-  function chgQty(id,delta){ setQty(id, Math.max(0,(cart[id]?.qty||0)+delta)); }
-  function setQty(id,v){ const qty=Math.max(0,Number(v||0)); const color = cart[id]?.color || PRODUCTS.find(x=>x.id===id).colors[0]; cart[id]={qty,color}; renderCart(); }
-
-  function renderCart(){
-    const c = $('#cart'); c.innerHTML='';
-    let subtotal = 0;
-    Object.entries(cart).forEach(([id,{qty,color}])=>{
-      if(qty>0){
-        const p = PRODUCTS.find(x=>x.id===id);
-        const line = document.createElement('div'); line.className='row';
-        const linePrice = p.price*qty; subtotal += linePrice;
-        line.innerHTML = `<div>${p.name} ${color?`(${color})`:''} × ${qty}</div><div>${fmt(linePrice)}</div>`;
-        c.appendChild(line);
-      }
-    });
-    const delivery = subtotal>0 ? 200 : 0;
-    $('#subtotal').textContent = fmt(subtotal);
-    $('#delivery').textContent = fmt(delivery);
-    $('#grand').textContent    = fmt(subtotal+delivery);
-  }
-
-  // ====== نافذة التفاصيل ======
-  function colorToCss(name){
-    if(name.includes('أزرق')) return '#1e40af';
-    if(name.includes('أسود')) return '#111';
-    if(name.includes('أبيض')) return '#fff';
-    return '#eee';
-  }
-
-  function openDetail(id){
-    const p = PRODUCTS.find(x=>x.id===id);
-    detail.id = id;
-    detail.color = cart[id]?.color || p.colors[0];
-    detail.qty   = Math.max(1, cart[id]?.qty || 1);
-
-    $('#d_img').src   = p.img;
-    $('#d_name').textContent = p.name;
-    $('#d_price').textContent = fmt(p.price);
-    $('#d_qty').value = detail.qty;
-
-    const cw = $('#d_colors'); cw.innerHTML='';
-    p.colors.forEach(col=>{
-      const d = document.createElement('div');
-      d.className = 'dot' + (col===detail.color ? ' sel' : '');
-      d.style.background = colorToCss(col);
-      if(col==='أبيض') d.style.border='1px solid #e5eaf1';
-      d.title = col;
-      d.onclick = ()=>{ detail.color = col; openDetail(id); }; // إعادة رسم لتحديث sel
-      cw.appendChild(d);
-    });
-
-    $('#detailOverlay').style.display='flex';
-  }
-
+  function renderProducts(){/* نفس الكود لي عندك */ ... }
+  function renderCart(){/* نفس الكود لي عندك */ ... }
+  function openDetail(id){/* نفس الكود لي عندك */ ... }
   function closeDetail(){ $('#detailOverlay').style.display='none'; }
   function overlayBgClick(e){ if(e.target.id==='detailOverlay') closeDetail(); }
-  function detailQty(delta){ const v = Math.max(1, Number($('#d_qty').value||1) + delta); $('#d_qty').value=v; detail.qty=v; }
-  function detailSetQty(v){ detail.qty = Math.max(1, Number(v||1)); }
+  function detailQty(d){ const v=Math.max(1,Number($('#d_qty').value||1)+d); $('#d_qty').value=v; detail.qty=v; }
+  function detailSetQty(v){ detail.qty=Math.max(1,Number(v||1)); }
+  function saveDetail(){ cart[detail.id]={qty:detail.qty,color:detail.color}; closeDetail(); renderProducts(); renderCart(); }
 
-  function saveDetail(){
-    const id = detail.id;
-    if(!id) return;
-    cart[id] = { qty: detail.qty, color: detail.color };
-    closeDetail();
-    renderProducts();
-    renderCart();
-  }
-
-  // ====== إرسال الطلب للخادم → Telegram ======
+  // === إرسال الطلب لتليغرام ===
   async function sendOrder(){
-    const name = $('#cust_name').value.trim();
-    const phone= $('#cust_phone').value.trim();
-    const addr = $('#cust_addr').value.trim();
-    if(!name || !phone || !addr){ alert('من فضلك املأ كل معلومات الزبون.'); return; }
+    const name=$('#cust_name').value.trim(), phone=$('#cust_phone').value.trim(), addr=$('#cust_addr').value.trim();
+    if(!name||!phone||!addr){ alert('من فضلك املأ كل المعلومات'); return; }
+    const items=Object.entries(cart).filter(([_,v])=>v.qty>0).map(([id,v])=>{
+      const p=PRODUCTS.find(x=>x.id===id); return `${p.name} (${v.color}) × ${v.qty} = ${p.price*v.qty} دج`;
+    });
+    if(items.length===0){ alert('سلتك فارغة'); return; }
 
-    const items = Object.entries(cart)
-      .filter(([_,v])=> (v.qty||0)>0)
-      .map(([id,v])=>{
-        const p = PRODUCTS.find(x=>x.id===id);
-        return { id, name:p.name, price:p.price, qty:v.qty, color:v.color };
-      });
-    if(items.length===0){ alert('سلتك فارغة.'); return; }
+    const msg = 
+`🛒 طلب جديد من YUBIX STORE
+👤 الاسم: ${name}
+📞 الهاتف: ${phone}
+📍 العنوان: ${addr}
 
-    const payload = { shop:'YUBIX STORE', customer:{ name, phone, address: addr }, items };
+${items.join('\n')}
+-----------------
+💰 الإجمالي: ${$('#grand').textContent}`;
+
+    const TOKEN = "8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60"; // 🔒 BOT TOKEN
+    const CHAT_ID = "6514099914
+"; // 👈 استبدلها بالـ chat_id نتاعك
 
     try{
-      const res = await fetch('/api/send-order', {
-        method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify(payload)
+      await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({chat_id:CHAT_ID,text:msg})
       });
-      if(!res.ok) throw new Error('send failed');
-      alert('✅ تم إرسال طلبك! سنقوم بالتواصل معك.');
-      cart = {}; renderProducts(); renderCart();
+      alert('✅ تم إرسال طلبك! سنتواصل معك قريباً.');
+      cart={}; renderProducts(); renderCart();
       $('#cust_name').value=''; $('#cust_phone').value=''; $('#cust_addr').value='';
-    }catch(e){
-      alert('❌ فشل الإرسال. تأكد أن الخادم شغال والمسار صحيح.');
-    }
+    }catch(e){ alert('❌ فشل الإرسال، تحقق من البوت.'); }
   }
 </script>
 </body>
 </html>
+</html>
+
 
 
