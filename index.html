@@ -132,9 +132,44 @@
     });
   });
 </script>
+<script>
+  document.getElementById("orderForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let data = {
+      customer: {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value
+      },
+      items: [
+        {
+          name: document.getElementById("product").value,
+          qty: document.getElementById("qty").value
+        }
+      ]
+    };
+
+    fetch("https://script.google.com/macros/s/AKfycbwjuXH8GCoecMYbg0AO3MgX2iOe3pIOMJfJryPoPnQ3pVIYioETElY5_xUvH6My_04n/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+    .then(res => res.text())
+    .then(response => {
+      alert("✅ تم إرسال الطلب بنجاح!");
+      document.getElementById("orderForm").reset();
+    })
+    .catch(err => {
+      alert("❌ خطأ أثناء الإرسال!");
+      console.error(err);
+    });
+  });
+</script>
 
 </body>
 </html>
+
 
 
 
