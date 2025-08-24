@@ -1,174 +1,200 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Yubix Store</title>
   <style>
-    body { margin:0; font-family: Arial, sans-serif; background:#f8f9fa; }
-    .welcome {
-      height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
-      background:linear-gradient(135deg,#0d6efd,#000);
-      color:white; text-align:center;
-    }
-    .welcome h1 { font-size:48px; margin:10px 0; }
-    .welcome button {
-      margin-top:20px; padding:15px 30px; font-size:18px; border:none;
-      border-radius:8px; background:#fff; color:#0d6efd; cursor:pointer;
-    }
-    .store { display:none; padding:20px; }
-    .products { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; }
-    .card {
-      background:white; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1);
-      padding:15px; text-align:center;
-    }
-    .card img { width:100%; border-radius:8px; }
-    .cart-form { margin-top:30px; background:#fff; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-    .cart-form input { width:100%; padding:10px; margin:10px 0; border:1px solid #ccc; border-radius:6px; }
-    .cart-form button {
-      width:100%; padding:12px; background:#0d6efd; color:white;
-      border:none; border-radius:6px; font-size:18px; cursor:pointer;
-    }
-    footer { text-align:center; padding:20px; margin-top:30px; color:#555; }
+    :root{--brand:#0d6efd;--bg:#f8f9fa;--card:#fff;--text:#0b1220;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:"Tajawal",system-ui,Arial;background:var(--bg);color:var(--text)}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+
+    /* Header */
+    header{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:10px;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:900}
+    .hint{color:var(--muted);font-size:13px}
+
+    /* Products grid */
+    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+    .card{background:var(--card);border-radius:14px;border:1px solid #e6edf6;box-shadow:0 6px 18px rgba(2,6,23,.05);padding:14px}
+    .pimg{width:100%;aspect-ratio:1/1;border-radius:10px;background:#eef2f7;overflow:hidden;display:grid;place-items:center;margin-bottom:10px}
+    .pimg img{width:100%;height:100%;object-fit:cover}
+    .title{margin:0;font-weight:800}
+    .price{color:var(--muted);font-size:14px;margin-top:4px}
+    .btn{border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:700}
+    .btn-primary{background:var(--brand);color:#fff;width:100%}
+
+    /* Cart + form */
+    .side{margin-top:22px}
+    .cart{background:#fff;border:1px solid #e6edf6;border-radius:14px;padding:14px}
+    .row{display:flex;justify-content:space-between;align-items:center;margin:6px 0}
+    .qty{display:inline-flex;align-items:center;border:1px solid #dbe4f0;border-radius:999px;overflow:hidden}
+    .qty button{width:30px;height:30px;border:0;background:#fff;cursor:pointer;font-size:18px}
+    .qty input{width:46px;text-align:center;border:0;outline:none;height:30px}
+
+    form.order{margin-top:14px;display:grid;gap:10px}
+    form.order input, form.order textarea{width:100%;padding:10px;border:1px solid #dbe4f0;border-radius:10px}
+    .submit{background:var(--brand);color:#fff;border:0;border-radius:12px;padding:12px;font-weight:900;cursor:pointer}
+
+    footer{text-align:center;color:#5b6b82;margin:24px 0}
+    footer .socials{display:flex;gap:10px;justify-content:center;margin-top:6px}
+    footer .socials a{padding:8px 10px;border:1px solid #e6edf6;background:#fff;border-radius:10px;text-decoration:none;color:var(--text)}
   </style>
 </head>
 <body>
-<section id="order" style="padding:30px; background:#f7f7f7;">
-  <h2 style="text-align:center;">📦 اطلب الآن</h2>
+  <main class="wrap">
+    <header>
+      <div class="brand"><div class="logo">Y</div><div><div style="font-weight:900">Yubix Store</div><div class="hint">خدمات التوصيل والدفع عند الاستلام</div></div></div>
+      <div class="hint">اختَر المنتج وأكد الطلب</div>
+    </header>
 
-  <form id="orderForm" style="max-width:500px; margin:auto; background:white; padding:20px; border-radius:12px;">
-    <input type="text" id="name" placeholder="الاسم الكامل" required>
-    <input type="text" id="phone" placeholder="رقم الهاتف" required>
-    <input type="text" id="address" placeholder="العنوان" required>
-    <input type="text" id="product" placeholder="اسم المنتج" required>
-    <input type="number" id="qty" placeholder="الكمية" required min="1" value="1">
-    <button type="submit">إرسال الطلب</button>
-  </form>
-</section>
+    <!-- المنتجات -->
+    <section>
+      <h2 style="margin:6px 0 12px 0">منتجاتنا</h2>
+      <div id="products" class="products"></div>
+    </section>
 
-  <!-- صفحة الترحيب -->
-  <div class="welcome" id="welcome">
-    <h1>Yubix Store</h1>
-    <p>مرحبا بك في متجرنا</p>
-    <button onclick="enterStore()">ادخل للمتجر</button>
-  </div>
+    <!-- السلة + فورم الزبون (فقط هذي هي واجهة التأكيد) -->
+    <section class="side">
+      <div class="cart">
+        <h3 style="margin:0 0 8px 0">سلة المشتريات</h3>
+        <div id="cartList" class="list"></div>
+        <div class="row"><div class="hint">المجموع</div><div id="subtotal">0 دج</div></div>
+        <div class="row"><div class="hint">التوصيل</div><div id="delivery">200 دج</div></div>
+        <div class="row" style="font-weight:900"><div>الإجمالي</div><div id="grand">0 دج</div></div>
 
-  <!-- المتجر -->
-  <div class="store" id="store">
-    <h2>منتجاتنا</h2>
-    <div class="products" id="products"></div>
-
-    <!-- Form تأكيد الطلب -->
-    <div class="cart-form">
-      <h3>تأكيد الطلب</h3>
-      <form id="orderForm">
-        <input type="text" id="name" placeholder="الاسم الكامل" required>
-        <input type="text" id="phone" placeholder="رقم الهاتف" required>
-        <input type="text" id="address" placeholder="العنوان" required>
-        <button type="submit">تأكيد الطلب</button>
-      </form>
-    </div>
+        <form id="orderForm" class="order">
+          <input id="cust_name" placeholder="الاسم الكامل" required>
+          <input id="cust_phone" placeholder="رقم الهاتف" required>
+          <textarea id="cust_addr" placeholder="العنوان بالتفصيل" rows="3" required></textarea>
+          <button class="submit" type="submit">تأكيد وإرسال الطلب</button>
+        </form>
+      </div>
+    </section>
 
     <footer>
-      <p>شكرا على الزيارة 💙 تابعونا على مواقع التواصل الاجتماعي</p>
+      <div>شكرا على الزيارة 💙 تابعونا على مواقع التواصل الاجتماعي</div>
+      <div class="socials">
+        <a href="#" target="_blank">📸 إنستغرام</a>
+        <a href="#" target="_blank">🎵 تيك توك</a>
+        <a href="#" target="_blank">📘 فايسبوك</a>
+        <a href="#" target="_blank">✈️ تيليغرام</a>
+      </div>
     </footer>
-  </div>
+  </main>
 
 <script>
-  let cart = [];
-
-  // منتجات مثال
-  const products = [
-    {id:1, name:"سماعات بلوتوث", price:2500, img:"https://via.placeholder.com/200x200.png?text=Headphones"},
-    {id:2, name:"شاحن سريع", price:1200, img:"https://via.placeholder.com/200x200.png?text=Charger"},
-    {id:3, name:"كابل USB", price:500, img:"https://via.placeholder.com/200x200.png?text=Cable"}
+  // المنتجات (بدّل الصور/الأسعار كما تريد)
+  const PRODUCTS = [
+    {id:1, name:"سماعات بلوتوث", price:2500, img:"https://via.placeholder.com/600x600.png?text=Headphones"},
+    {id:2, name:"شاحن سريع",     price:1200, img:"https://via.placeholder.com/600x600.png?text=Charger"},
+    {id:3, name:"كابل USB",       price: 500, img:"https://via.placeholder.com/600x600.png?text=Cable"}
   ];
 
   const productsDiv = document.getElementById("products");
+  const cartList = document.getElementById('cartList');
+  const subtotalEl = document.getElementById('subtotal');
+  const deliveryEl = document.getElementById('delivery');
+  const grandEl = document.getElementById('grand');
 
-  products.forEach(p => {
-    let div = document.createElement("div");
-    div.className="card";
-    div.innerHTML = `
-      <img src="${p.img}" alt="${p.name}">
-      <h4>${p.name}</h4>
-      <p>${p.price} دج</p>
-      <button onclick="addToCart(${p.id})">إضافة للسلة</button>
-    `;
-    productsDiv.appendChild(div);
-  });
+  // سلة: {id, name, price, qty}
+  let cart = [];
 
-  function addToCart(id) {
-    let product = products.find(p => p.id===id);
-    cart.push({...product, qty:1});
-    alert(product.name + " تمت إضافته ✅");
+  function fmt(n){ return `${Number(n).toLocaleString('ar-DZ')} دج`; }
+
+  function renderProducts(){
+    productsDiv.innerHTML = '';
+    PRODUCTS.forEach(p=>{
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="pimg"><img src="${p.img}" alt="${p.name}"></div>
+        <h4 class="title">${p.name}</h4>
+        <div class="price">${fmt(p.price)}</div>
+        <button class="btn btn-primary" onclick="addToCart(${p.id})">إضافة للسلة</button>
+      `;
+      productsDiv.appendChild(card);
+    });
   }
 
-  function enterStore(){
-    document.getElementById("welcome").style.display="none";
-    document.getElementById("store").style.display="block";
+  function addToCart(id){
+    const p = PRODUCTS.find(x=>x.id===id);
+    const ex = cart.find(x=>x.id===id);
+    if(ex) ex.qty += 1; else cart.push({id:p.id, name:p.name, price:p.price, qty:1});
+    renderCart();
+    alert(p.name + ' تمت إضافته ✅');
   }
 
-  // إرسال الطلب لـ Google Sheets
-  document.getElementById("orderForm").addEventListener("submit", function(e) {
+  function setQty(id, v){
+    const it = cart.find(x=>x.id===id); if(!it) return;
+    it.qty = Math.max(0, Number(v||0));
+    if(it.qty===0) cart = cart.filter(x=>x.id!==id);
+    renderCart();
+  }
+
+  function renderCart(){
+    cartList.innerHTML = '';
+    let subtotal = 0;
+    if(cart.length===0){ cartList.innerHTML = '<div class="hint">السلة فارغة</div>'; }
+    cart.forEach(it=>{
+      const line = document.createElement('div'); line.className='row';
+      const linePrice = it.price * it.qty; subtotal += linePrice;
+      line.innerHTML = `
+        <div>${it.name} × 
+          <span class="qty">
+            <button type="button" onclick="setQty(${it.id}, ${Math.max(0,(it.qty-1))})">−</button>
+            <input type="number" min="0" value="${it.qty}" onchange="setQty(${it.id}, this.value)">
+            <button type="button" onclick="setQty(${it.id}, ${it.qty+1})">+</button>
+          </span>
+        </div>
+        <div>${fmt(linePrice)}</div>`;
+      cartList.appendChild(line);
+    });
+    const delivery = subtotal>0 ? 200 : 0;
+    subtotalEl.textContent = fmt(subtotal);
+    deliveryEl.textContent = fmt(delivery);
+    grandEl.textContent = fmt(subtotal + delivery);
+  }
+
+  // إرسال الطلب إلى Google Apps Script (يرسل أيضاً إلى Telegram من خلال السكريبت عندك)
+  document.getElementById('orderForm').addEventListener('submit', function(e){
     e.preventDefault();
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let address = document.getElementById("address").value;
+    const name = document.getElementById('cust_name').value.trim();
+    const phone= document.getElementById('cust_phone').value.trim();
+    const addr = document.getElementById('cust_addr').value.trim();
 
-    let order = {
-      customer: { name, phone, address },
+    if(cart.length===0){ alert('السلة فارغة'); return; }
+
+    const payload = {
+      customer: { name, phone, address: addr },
       items: cart
     };
 
-    fetch("https://script.google.com/macros/s/AKfycbwjuXH8GCoecMYbg0AO3MgX2iOe3pIOMJfJryPoPnQ3pVIYioETElY5_xUvH6My_04n/exec", {  // 🔴 غيّر XXXX بالرابط نتاعك
-      method: "POST",
-      body: JSON.stringify(order)
+    fetch('https://script.google.com/macros/s/AKfycbwjuXH8GCoecMYbg0AO3MgX2iOe3pIOMJfJryPoPnQ3pVIYioETElY5_xUvH6My_04n/exec', {
+      method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)
     })
-    .then(res => res.text())
-    .then(data => {
-      alert(data);
-      cart = [];
-      document.getElementById("orderForm").reset();
-    });
-  });
-</script>
-<script>
-  document.getElementById("orderForm").addEventListener("submit", function(e){
-    e.preventDefault();
-
-    let data = {
-      customer: {
-        name: document.getElementById("name").value,
-        phone: document.getElementById("phone").value,
-        address: document.getElementById("address").value
-      },
-      items: [
-        {
-          name: document.getElementById("product").value,
-          qty: document.getElementById("qty").value
-        }
-      ]
-    };
-
-    fetch("https://script.google.com/macros/s/AKfycbwjuXH8GCoecMYbg0AO3MgX2iOe3pIOMJfJryPoPnQ3pVIYioETElY5_xUvH6My_04n/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
+    .then(r=> r.text())
+    .then(txt=>{
+      alert('✅ تم إرسال الطلب بنجاح');
+      // تصفية
+      cart = []; renderCart();
+      document.getElementById('orderForm').reset();
     })
-    .then(res => res.text())
-    .then(response => {
-      alert("✅ تم إرسال الطلب بنجاح!");
-      document.getElementById("orderForm").reset();
-    })
-    .catch(err => {
-      alert("❌ خطأ أثناء الإرسال!");
+    .catch(err=>{
       console.error(err);
+      alert('❌ فشل الإرسال.');
     });
   });
-</script>
 
+  // تشغيل أولي
+  renderProducts();
+  renderCart();
+</script>
 </body>
 </html>
+
 
 
 
