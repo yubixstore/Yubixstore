@@ -2,110 +2,269 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>متجري</title>
+  <title>Yubix Store</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #2196f3, #bbdefb);
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+    }
+
+    /* اللوغو دائري */
+    #logo {
+      margin: 20px auto;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      overflow: hidden;
+      box-shadow: 0px 0px 12px rgba(0,0,0,0.3);
+    }
+    .logo-img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* صفحة البداية */
+    #welcome {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #004e92, #5dade2);
+      color: white;
       text-align: center;
-      padding: 30px;
     }
-
-    .product {
+    #welcome h1 { font-size: 40px; margin-bottom: 20px; }
+    #enterBtn {
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 25px;
+      background: #ffcc00;
       cursor: pointer;
-      display: inline-block;
-      background: #fff;
-      padding: 15px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
 
-    .product img {
-      width: 150px;
-      border-radius: 12px;
+    /* المتجر */
+    #store {
+      display: none;
+      background: linear-gradient(135deg, #5dade2, #004e92);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
     }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .product {
+      background: white;
+      color: black;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .cart {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 260px;
+      background: rgba(0,0,0,0.85);
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .cart h3 { color: #ffcc00; }
+    form input, form button, form textarea {
+      margin: 5px;
+      padding: 8px;
+      width: 90%;
+      border-radius: 6px;
+      border: none;
+    }
+    form button { background: #ffcc00; font-weight: bold; cursor: pointer; }
+    textarea { resize: none; }
 
     /* النافذة المنبثقة */
     .modal {
       display: none;
       position: fixed;
-      left: 0; top: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
       justify-content: center;
       align-items: center;
-      z-index: 1000;
     }
-
     .modal-content {
-      background: #fff;
+      background: white;
+      color: black;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 10px;
+      max-width: 400px;
       text-align: center;
-      width: 300px;
     }
-
-    .close {
-      float: right;
-      cursor: pointer;
-      font-size: 20px;
+    .color-options {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
     }
-
-    select, input {
-      margin: 10px 0;
-      padding: 5px;
-      width: 90%;
-    }
-
-    button {
-      background: #2196f3;
-      color: white;
-      border: none;
-      padding: 10px 20px;
+    .color-options img {
+      width: 60px;
+      height: 60px;
       border-radius: 8px;
       cursor: pointer;
+      border: 2px solid transparent;
+    }
+    .color-options img.selected {
+      border: 2px solid red;
     }
   </style>
 </head>
 <body>
 
-  <!-- المنتج -->
-  <div class="product" onclick="openModal()">
-    <img src="p9-black.jpg" alt="P9">
-    <h3>سماعة P9</h3>
-    <p>السعر: 2500 دج</p>
+  <!-- صفحة البداية -->
+  <div id="welcome">
+    <div id="logo">
+      <img src="photo_2025-08-21_13-08-52.jpg" alt="Logo" class="logo-img">
+    </div>
+    <h1>yubixstore</h1>
+    <button id="enterBtn">ادخل ➡️</button>
   </div>
 
-  <!-- النافذة المنبثقة -->
-  <div class="modal" id="productModal">
+  <!-- المتجر -->
+  <div id="store">
+    <div class="cart">
+      <h3>🛒 السلة</h3>
+      <ul id="cartItems"></ul>
+      <h4 id="total">المجموع: 0 دج</h4>
+      <form id="orderForm">
+        <input type="text" id="name" placeholder="الاسم الكامل" required><br>
+        <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
+        <textarea id="address" placeholder="العنوان بالتفصيل" required></textarea><br>
+        <input type="text" id="discount" placeholder="أدخل كود الخصم"><br>
+        <button type="submit">تأكيد وإرسال الطلب ✅</button>
+      </form>
+      <p id="message"></p>
+    </div>
+
+    <h2 style="text-align:center;">منتجاتنا</h2>
+    <div class="products">
+      <div class="product">
+        <img src="photo_2025-08-21_09-18-42.jpg" alt="سماعات رأس p9" onclick="openModal()">
+        <h3>سماعات رأس p9</h3>
+        <p>السعر: 1200 دج</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- النافذة المنبثقة للألوان -->
+  <div class="modal" id="colorModal">
     <div class="modal-content">
-      <span class="close" onclick="closeModal()">&times;</span>
-      <h2>سماعة P9</h2>
-      <img src="p9-black.jpg" alt="P9" style="width:100px; border-radius:8px;">
-      <p>السعر: 2500 دج</p>
-
-      <label>إختر اللون:</label>
-      <select>
-        <option>أسود</option>
-        <option>أبيض</option>
-        <option>أحمر</option>
-      </select>
-
-      <label>الكمية:</label>
-      <input type="number" value="1" min="1">
-
-      <button>إضافة للسلة</button>
+      <h3>اختر اللون</h3>
+      <div class="color-options">
+        <img src="p9_black.jpg" alt="أسود" onclick="selectColor(this,'أسود')">
+        <img src="p9_white.jpg" alt="أبيض" onclick="selectColor(this,'أبيض')">
+        <img src="p9_red.jpg" alt="أحمر" onclick="selectColor(this,'أحمر')">
+        <img src="p9_blue.jpg" alt="أزرق" onclick="selectColor(this,'أزرق')">
+        <img src="p9_gold.jpg" alt="ذهبي" onclick="selectColor(this,'ذهبي')">
+      </div>
+      <button onclick="addSelectedToCart()">إضافة للسلة</button>
+      <button onclick="closeModal()">إلغاء</button>
     </div>
   </div>
 
   <script>
-    function openModal() {
-      document.getElementById("productModal").style.display = "flex";
+    let cart = [];
+    let discountCodes = { "SALE10": 0.1, "VIP20": 0.2 };
+    let selectedColor = null;
+
+    function renderCart(){
+      let list = document.getElementById("cartItems");
+      list.innerHTML="";
+      let total = 0;
+      cart.forEach(item => {
+        let li = document.createElement("li");
+        li.textContent = `${item.name} (${item.color}) - ${item.price}دج`;
+        list.appendChild(li);
+        total += item.price;
+      });
+      document.getElementById("total").textContent = `المجموع: ${total} دج`;
     }
 
-    function closeModal() {
-      document.getElementById("productModal").style.display = "none";
+    function openModal(){
+      document.getElementById("colorModal").style.display="flex";
     }
+    function closeModal(){
+      document.getElementById("colorModal").style.display="none";
+      selectedColor=null;
+      document.querySelectorAll(".color-options img").forEach(img=>img.classList.remove("selected"));
+    }
+
+    function selectColor(el,color){
+      document.querySelectorAll(".color-options img").forEach(img=>img.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedColor=color;
+    }
+
+    function addSelectedToCart(){
+      if(!selectedColor){ alert("⚠️ اختر اللون أولا!"); return; }
+      cart.push({name:"سماعات رأس p9",price:1200,color:selectedColor});
+      renderCart();
+      closeModal();
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      let name = document.getElementById("name").value;
+      let phone = document.getElementById("phone").value;
+      let address = document.getElementById("address").value;
+      let discountCode = document.getElementById("discount").value.trim();
+
+      let total = cart.reduce((sum,item)=>sum+item.price,0);
+      if(discountCodes[discountCode]){
+        let discount = discountCodes[discountCode];
+        total = total - (total*discount);
+      }
+
+      let items = cart.map(i => `${i.name} (${i.color}) - ${i.price}دج`).join("\n");
+      let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
+
+      let token = "توكن_تاعك";
+      let chat_id = "chatid_تاعك";
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chat_id,
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.ok){
+          document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
+          cart = [];
+          renderCart();
+          document.getElementById("orderForm").reset();
+        } else {
+          document.getElementById("message").textContent = "❌ فشل الإرسال! تحقق من التوكن أو ID.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("message").textContent = "❌ فشل الاتصال بالسيرفر!";
+      });
+    });
+
+    document.getElementById("enterBtn").addEventListener("click",()=>{
+      document.getElementById("welcome").style.display="none";
+      document.getElementById("store").style.display="block";
+    });
   </script>
 
 </body>
