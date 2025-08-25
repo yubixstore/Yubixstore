@@ -2,233 +2,127 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>Yubix Store</title>
+  <title>متجري</title>
   <style>
     body {
-      font-family: Tahoma, sans-serif;
-      margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
       direction: rtl;
-    }
-
-    /* اللوغو دائري */
-    #logo {
-      margin: 20px auto;
-      width: 140px;
-      height: 140px;
-      border-radius: 50%;       /* يخلي الشكل دائري */
-      overflow: hidden;         /* يمنع الصورة من الخروج */
-      box-shadow: 0px 0px 12px rgba(0,0,0,0.3);
-    }
-
-    .logo-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;        /* يخلي الصورة تتقص باش تجي مليحة داخل الدائرة */
-    }
-
-    /* صفحة البداية */
-    #welcome {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #004e92, #5dade2);
-      color: white;
-      text-align: center;
-    }
-    #welcome h1 { font-size: 40px; margin-bottom: 20px; }
-    
-    #enterBtn {
-      padding: 12px 30px;
-      font-size: 18px;
-      border: none;
-      border-radius: 25px;
-      background: #ffcc00;
-      cursor: pointer;
-    }
-
-    /* المتجر */
-    #store {
-      display: none;
-      background: linear-gradient(135deg, #5dade2, #004e92);
-      min-height: 100vh;
-      color: white;
+      background: linear-gradient(to bottom, #0077ff, #a8d8ff);
+      margin: 0;
       padding: 20px;
-    }
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
+      text-align: center;
     }
     .product {
-      background: white;
-      color: black;
-      padding: 10px;
-      border-radius: 10px;
-      text-align: center;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background: #fff;
+      padding: 15px;
+      margin: 15px auto;
+      width: 280px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
     .product img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
+      width: 200px;
+      height: auto;
       border-radius: 10px;
     }
-    .cart {
-      position: fixed;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 260px;
-      background: rgba(0,0,0,0.85);
-      padding: 15px;
-      overflow-y: auto;
-    }
-    .cart h3 { color: #ffcc00; }
-    .social {
-      margin-top: 30px;
-      text-align: center;
-    }
-    .social a {
-      margin: 0 10px;
-      color: white;
-      font-size: 24px;
-      text-decoration: none;
-    }
-    form input, form button, form textarea {
-      margin: 5px;
-      padding: 8px;
-      width: 90%;
-      border-radius: 6px;
+    button {
+      background: #0077ff;
+      color: #fff;
       border: none;
-    }
-    form button {
-      background: #ffcc00;
-      font-weight: bold;
+      padding: 10px 15px;
+      margin-top: 10px;
+      border-radius: 8px;
       cursor: pointer;
     }
-    textarea { resize: none; }
+    button:hover {
+      background: #005fcc;
+    }
+    #cart {
+      background: #fff;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-align: right;
+      max-width: 400px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    #cart ul {
+      list-style: none;
+      padding: 0;
+    }
+    #cart ul li {
+      margin: 5px 0;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- صفحة البداية -->
-  <div id="welcome">
-    <div id="logo">
-      <img src="photo_2025-08-21_13-08-52.jpg" alt="Logo" class="logo-img">
-    </div>
-    <h1>yubixstore</h1>
-    <button id="enterBtn">ادخل ➡️</button>
+  <h1>🎧 مرحبا بكم في متجرنا</h1>
+
+  <!-- منتج سماعات P9 -->
+  <div class="product">
+    <img id="p9-img" src="p9-black.jpg" alt="سماعات رأس P9">
+    <h3>سماعات رأس P9</h3>
+    <p>السعر: 1200 دج</p>
+
+    <!-- اختيار اللون -->
+    <label for="p9-color">اختر اللون:</label>
+    <select id="p9-color" onchange="changeP9Color()">
+      <option value="black" data-img="p9-black.jpg">أسود</option>
+      <option value="white" data-img="p9-white.jpg">أبيض</option>
+      <option value="red" data-img="p9-red.jpg">أحمر</option>
+      <option value="blue" data-img="p9-blue.jpg">أزرق</option>
+      <option value="gold" data-img="p9-gold.jpg">ذهبي</option>
+    </select>
+
+    <button onclick="addP9ToCart()">إضافة للسلة</button>
   </div>
 
-  <!-- المتجر -->
-  <div id="store">
-    <div class="cart">
-      <h3>🛒 السلة</h3>
-      <ul id="cartItems"></ul>
-      <h4 id="total">المجموع: 0 دج</h4>
-      <form id="orderForm">
-        <input type="text" id="name" placeholder="الاسم الكامل" required><br>
-        <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
-        <textarea id="address" placeholder="العنوان بالتفصيل" required></textarea><br>
-        <input type="text" id="discount" placeholder="أدخل كود الخصم"><br>
-        <button type="submit">تأكيد وإرسال الطلب ✅</button>
-      </form>
-      <p id="message"></p>
-    </div>
-
-    <h2 style="text-align:center;">منتجاتنا</h2>
-    <div class="products">
-      <div class="product">
-        <img src="photo_2025-08-21_09-18-42.jpg" alt="سماعات رأس p9">
-        <h3>سماعات رأس p9</h3>
-        <p>السعر: 1200 دج</p>
-        <button onclick="addToCart('سماعات رأس p9',1200)">إضافة للسلة</button>
-      </div>
-     
-    </div>
-
-    <div class="social">
-      <a href="#">📷</a>
-      <a href="#">🎵</a>
-      <a href="#">📘</a>
-      <a href="#">✈️</a>
-    </div>
+  <!-- السلة -->
+  <div id="cart">
+    <h2>🛒 سلة المشتريات</h2>
+    <ul id="cartItems"></ul>
+    <p id="total">المجموع: 0 دج</p>
   </div>
 
   <script>
     let cart = [];
-    let discountCodes = { "SALE10": 0.1, "VIP20": 0.2 };
 
-    function addToCart(name, price){
-      cart.push({name,price});
+    function changeP9Color() {
+      let select = document.getElementById("p9-color");
+      let img = document.getElementById("p9-img");
+      let newImg = select.options[select.selectedIndex].getAttribute("data-img");
+      img.src = newImg;
+    }
+
+    function addP9ToCart() {
+      let select = document.getElementById("p9-color");
+      let colorText = select.options[select.selectedIndex].text;
+      addToCart(`سماعات رأس P9 (${colorText})`, 1200);
+    }
+
+    function addToCart(name, price) {
+      cart.push({ name, price });
       renderCart();
     }
 
-    function renderCart(){
+    function renderCart() {
       let list = document.getElementById("cartItems");
-      list.innerHTML="";
+      list.innerHTML = "";
       let total = 0;
       cart.forEach(item => {
         let li = document.createElement("li");
-        li.textContent = `${item.name} - ${item.price}دج`;
+        li.textContent = `${item.name} - ${item.price} دج`;
         list.appendChild(li);
         total += item.price;
       });
       document.getElementById("total").textContent = `المجموع: ${total} دج`;
     }
-
-    document.getElementById("orderForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      let name = document.getElementById("name").value;
-      let phone = document.getElementById("phone").value;
-      let address = document.getElementById("address").value;
-      let discountCode = document.getElementById("discount").value.trim();
-
-      let total = cart.reduce((sum,item)=>sum+item.price,0);
-      if(discountCodes[discountCode]){
-        let discount = discountCodes[discountCode];
-        total = total - (total*discount);
-      }
-
-      let items = cart.map(i => `${i.name} - ${i.price}دج`).join("\n");
-      let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
-
-      let token = "توكن_تاعك";
-      let chat_id = "chatid_تاعك";
-
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chat_id,
-          text: message
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.ok){
-          document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
-          cart = [];
-          renderCart();
-          document.getElementById("orderForm").reset();
-        } else {
-          document.getElementById("message").textContent = "❌ فشل الإرسال! تحقق من التوكن أو ID.";
-        }
-      })
-      .catch(err => {
-        document.getElementById("message").textContent = "❌ فشل الاتصال بالسيرفر!";
-      });
-    });
-
-    document.getElementById("enterBtn").addEventListener("click",()=>{
-      document.getElementById("welcome").style.display="none";
-      document.getElementById("store").style.display="block";
-    });
   </script>
 
 </body>
 </html>
-
-
