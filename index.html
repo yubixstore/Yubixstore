@@ -2,76 +2,44 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>متجري</title>
+  <title>متجر سماعات P9</title>
   <style>
     body {
-      font-family: Tahoma, sans-serif;
-      direction: rtl;
       margin: 0;
-      padding: 0;
-      background: linear-gradient(to bottom, #007bff, #87cefa);
+      font-family: Arial, sans-serif;
+      direction: rtl;
+      background: linear-gradient(to bottom right, #003366, #66a3ff);
     }
-    h1, h2 { text-align: center; }
-
-    /* صفحة البداية */
-    #welcome {
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    header {
+      text-align: center;
+      padding: 20px;
+      background: #002244;
       color: white;
     }
     #logo img {
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      border: 3px solid white;
     }
-    #enterBtn {
-      margin-top: 20px;
-      padding: 10px 20px;
-      font-size: 18px;
-      background: white;
-      color: #007bff;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    /* المنتجات */
-    #shop {
-      display: none;
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
       padding: 20px;
     }
     .product {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      margin: 10px;
+      background: white;
       padding: 10px;
-      display: inline-block;
+      border-radius: 12px;
       width: 200px;
       text-align: center;
-      background: white;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.3s;
     }
-    .product img {
-      width: 100%;
-      border-radius: 10px;
-    }
-
-    /* السلة */
-    #cart {
-      position: fixed;
-      right: 0;
-      top: 0;
-      width: 250px;
-      height: 100%;
-      background: #f9f9f9;
-      border-left: 2px solid #007bff;
-      padding: 10px;
-      overflow-y: auto;
-    }
-
+    .product:hover { transform: scale(1.05); }
+    .product img { width: 100%; border-radius: 10px; }
     /* نافذة منبثقة */
     .modal {
       display: none;
@@ -84,173 +52,165 @@
       align-items: center;
     }
     .modal-content {
-      background: white;
+      background: #fff;
       padding: 20px;
-      border-radius: 10px;
-      width: 300px;
+      border-radius: 12px;
+      width: 320px;
       text-align: center;
+      position: relative;
     }
     .close {
-      float: left;
-      font-size: 20px;
+      position: absolute;
+      top: 10px; left: 10px;
       cursor: pointer;
-      color: red;
+      font-size: 20px;
     }
-
-    /* الروابط */
-    #social {
-      margin: 20px;
-      text-align: center;
+    #cart {
+      position: fixed;
+      right: 0; top: 0;
+      width: 250px;
+      height: 100%;
+      background: #f4f4f4;
+      border-left: 2px solid #ccc;
+      padding: 10px;
+      overflow-y: auto;
     }
-    #social a {
-      margin: 0 10px;
-      text-decoration: none;
-      font-size: 18px;
+    #cart h2 { text-align: center; }
+    .checkout {
+      margin-top: 20px;
+      padding: 10px;
+      background: #002244;
       color: white;
-      font-weight: bold;
+      text-align: center;
+      cursor: pointer;
+      border-radius: 8px;
+    }
+    #checkoutForm {
+      display: none;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      margin: 20px;
+    }
+    input, select {
+      width: 90%;
+      margin: 5px 0;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <!-- صفحة البداية -->
-  <div id="welcome">
-    <div id="logo">
-      <img src="logo.png" alt="Logo">
-    </div>
-    <h1>🛍️ متجري</h1>
-    <button id="enterBtn">ادخل</button>
+<header>
+  <div id="logo">
+    <img src="logo.jpg" alt="شعار المتجر">
   </div>
+  <h1>مرحبا بكم في متجر P9</h1>
+</header>
 
-  <!-- المتجر -->
-  <div id="shop">
-    <h2>منتجاتنا</h2>
-
-    <div class="product" onclick="openModal('هاتف Samsung','samsung.jpg',20000)">
-      <img src="samsung.jpg" alt="Samsung">
-      <h3>هاتف Samsung</h3>
-      <p>20000 دج</p>
-    </div>
-
-    <div class="product" onclick="openModal('سماعات Bluetooth','headset.jpg',3000)">
-      <img src="headset.jpg" alt="Headset">
-      <h3>سماعات Bluetooth</h3>
-      <p>3000 دج</p>
-    </div>
-
-    <!-- نافذة منبثقة -->
-    <div id="productModal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeModal()">✖</span>
-        <img id="modalImg" src="" style="width:100%; border-radius:10px;">
-        <h3 id="modalName"></h3>
-        <p id="modalPrice"></p>
-        <label>اختر اللون:</label>
-        <select id="colorSelect">
-          <option>أسود</option>
-          <option>أبيض</option>
-          <option>أزرق</option>
-        </select>
-        <br><br>
-        <button onclick="addToCartFromModal()">إضافة للسلة</button>
-      </div>
-    </div>
-
-    <!-- السلة -->
-    <div id="cart">
-      <h2>🛒 السلة</h2>
-      <ul id="cartItems"></ul>
-      <hr>
-      <form id="orderForm">
-        <input type="text" id="name" placeholder="الاسم الكامل" required><br>
-        <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
-        <input type="text" id="address" placeholder="العنوان" required><br>
-        <input type="text" id="discount" placeholder="كود الخصم"><br>
-        <button type="submit">تأكيد الطلب ✅</button>
-      </form>
-      <p id="message"></p>
-    </div>
+<div class="products">
+  <div class="product" onclick="openModal('P9 Bluetooth','p9-black.jpg',2500)">
+    <img src="p9-black.jpg" alt="P9">
+    <h3>P9 Bluetooth</h3>
+    <p>2500 دج</p>
   </div>
+  <!-- تقدر تزيد منتجات أخرى بنفس النموذج -->
+</div>
 
-  <!-- روابط التواصل -->
-  <div id="social">
-    <a href="#">Instagram</a>
-    <a href="#">TikTok</a>
-    <a href="#">Facebook</a>
-    <a href="#">Telegram</a>
+<!-- نافذة منبثقة -->
+<div class="modal" id="productModal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+    <img id="modalImage" src="" style="width:100%;border-radius:10px;">
+    <h3 id="modalName"></h3>
+    <p id="modalPrice"></p>
+
+    <label>اختر اللون:</label>
+    <select id="colorSelect">
+      <option value="black">أسود</option>
+      <option value="white">أبيض</option>
+      <option value="red">أحمر</option>
+      <option value="blue">أزرق</option>
+      <option value="gold">ذهبي</option>
+    </select>
+
+    <label>الكمية:</label>
+    <input type="number" id="quantityInput" value="1" min="1">
+
+    <br><br>
+    <button onclick="addToCart()">إضافة للسلة</button>
   </div>
+</div>
 
-  <script>
-    let cart = [];
-    let currentProduct = {};
+<!-- السلة -->
+<div id="cart">
+  <h2>🛒 السلة</h2>
+  <ul id="cartItems"></ul>
+  <div class="checkout" onclick="showCheckout()">إتمام الطلب</div>
+</div>
 
-    document.getElementById("enterBtn").onclick = () => {
-      document.getElementById("welcome").style.display = "none";
-      document.getElementById("shop").style.display = "block";
-    };
+<!-- فورم تأكيد الطلبية -->
+<div id="checkoutForm">
+  <h3>تأكيد الطلبية</h3>
+  <input type="text" id="name" placeholder="الاسم الكامل">
+  <input type="text" id="phone" placeholder="رقم الهاتف">
+  <input type="text" id="address" placeholder="العنوان">
+  <input type="text" id="discount" placeholder="كود خصم (اختياري)">
+  <br>
+  <button onclick="confirmOrder()">تأكيد الطلبية</button>
+</div>
 
-    function openModal(name, img, price) {
-      currentProduct = { name, img, price };
-      document.getElementById("modalName").textContent = name;
-      document.getElementById("modalPrice").textContent = price + " دج";
-      document.getElementById("modalImg").src = img;
-      document.getElementById("productModal").style.display = "flex";
-    }
+<script>
+  let currentProduct = {};
+  let cart = [];
 
-    function closeModal() {
-      document.getElementById("productModal").style.display = "none";
-    }
-
-    function addToCartFromModal() {
-      let color = document.getElementById("colorSelect").value;
-      cart.push({ ...currentProduct, color, qty: 1 });
-      renderCart();
-      closeModal();
-    }
-
-    function renderCart() {
-      const cartList = document.getElementById("cartItems");
-      cartList.innerHTML = "";
-      cart.forEach(item => {
-        let li = document.createElement("li");
-        li.textContent = `${item.name} - ${item.price} دج - ${item.color} x${item.qty}`;
-        cartList.appendChild(li);
-      });
-    }
-
-    document.getElementById("orderForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      let name = document.getElementById("name").value;
-      let phone = document.getElementById("phone").value;
-      let address = document.getElementById("address").value;
-      let discount = document.getElementById("discount").value;
-
-      let items = cart.map(i => `${i.name} - ${i.price}دج - ${i.color} x${i.qty}`).join("\n");
-      let total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
-
-      if(discount === "SALE10") total *= 0.9; // 10% تخفيض
-
-      let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع: ${total} دج`;
-
-      let token = "8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60";
-      let chat_id = "6514099914";
-
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ chat_id, text: message })
-      })
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("message").textContent = "✅ تم إرسال الطلب!";
-        cart = [];
-        renderCart();
-        document.getElementById("orderForm").reset();
-      })
-      .catch(err => {
-        document.getElementById("message").textContent = "❌ فشل الإرسال!";
-      });
+  function openModal(name, image, price) {
+    currentProduct = {name, image, price};
+    document.getElementById("modalName").innerText = name;
+    document.getElementById("modalImage").src = image;
+    document.getElementById("modalPrice").innerText = price + " دج";
+    document.getElementById("productModal").style.display = "flex";
+  }
+  function closeModal() {
+    document.getElementById("productModal").style.display = "none";
+  }
+  function addToCart() {
+    const color = document.getElementById("colorSelect").value;
+    const quantity = parseInt(document.getElementById("quantityInput").value);
+    cart.push({...currentProduct, color, quantity});
+    updateCart();
+    closeModal();
+  }
+  function updateCart() {
+    const list = document.getElementById("cartItems");
+    list.innerHTML = "";
+    cart.forEach(item=>{
+      const li = document.createElement("li");
+      li.innerText = item.name + " - " + item.color + " x" + item.quantity + " (" + item.price + "دج)";
+      list.appendChild(li);
     });
-  </script>
+  }
+  function showCheckout() {
+    document.getElementById("checkoutForm").style.display = "block";
+  }
+  function confirmOrder() {
+    const name = document.getElementById("name").value;
+    const phone = document.getElementById("phone").value;
+    const address = document.getElementById("address").value;
+    const discount = document.getElementById("discount").value;
+    alert("✅ شكرا " + name + "! تم تأكيد طلبك. سنتصل بك على " + phone);
+  }
+</script>
+
 </body>
 </html>
