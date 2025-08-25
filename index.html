@@ -4,24 +4,110 @@
   <meta charset="UTF-8">
   <title>Yubix Store</title>
   <style>
-    body { font-family: Tahoma, sans-serif; margin: 0; padding: 0; direction: rtl; }
-    #logo { margin: 20px auto; width: 140px; height: 140px; border-radius: 50%; overflow: hidden; box-shadow: 0px 0px 12px rgba(0,0,0,0.3); }
-    .logo-img { width: 100%; height: 100%; object-fit: cover; }
-    #welcome { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #004e92, #5dade2); color: white; text-align: center; }
+    body {
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+    }
+
+    /* اللوغو دائري */
+    #logo {
+      margin: 20px auto;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;       /* يخلي الشكل دائري */
+      overflow: hidden;         /* يمنع الصورة من الخروج */
+      box-shadow: 0px 0px 12px rgba(0,0,0,0.3);
+    }
+
+    .logo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;        /* يخلي الصورة تتقص باش تجي مليحة داخل الدائرة */
+    }
+
+    /* صفحة البداية */
+    #welcome {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #004e92, #5dade2);
+      color: white;
+      text-align: center;
+    }
     #welcome h1 { font-size: 40px; margin-bottom: 20px; }
-    #enterBtn { padding: 12px 30px; font-size: 18px; border: none; border-radius: 25px; background: #ffcc00; cursor: pointer; }
-    #store { display: none; background: linear-gradient(135deg, #5dade2, #004e92); min-height: 100vh; color: white; padding: 20px; }
-    .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-    .product { background: white; color: black; padding: 10px; border-radius: 10px; text-align: center; }
-    .product img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; }
-    .colors { margin-top: 8px; }
-    .color-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #ccc; display: inline-block; cursor: pointer; margin: 2px; }
-    .cart { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; background: rgba(0,0,0,0.85); padding: 15px; overflow-y: auto; }
+    
+    #enterBtn {
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 25px;
+      background: #ffcc00;
+      cursor: pointer;
+    }
+
+    /* المتجر */
+    #store {
+      display: none;
+      background: linear-gradient(135deg, #5dade2, #004e92);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .product {
+      background: white;
+      color: black;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .cart {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: rgba(0,0,0,0.85);
+      padding: 15px;
+      overflow-y: auto;
+    }
     .cart h3 { color: #ffcc00; }
-    .social { margin-top: 30px; text-align: center; }
-    .social a { margin: 0 10px; color: white; font-size: 24px; text-decoration: none; }
-    form input, form button, form textarea { margin: 5px; padding: 8px; width: 90%; border-radius: 6px; border: none; }
-    form button { background: #ffcc00; font-weight: bold; cursor: pointer; }
+    .social {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .social a {
+      margin: 0 10px;
+      color: white;
+      font-size: 24px;
+      text-decoration: none;
+    }
+    form input, form button, form textarea {
+      margin: 5px;
+      padding: 8px;
+      width: 90%;
+      border-radius: 6px;
+      border: none;
+    }
+    form button {
+      background: #ffcc00;
+      font-weight: bold;
+      cursor: pointer;
+    }
     textarea { resize: none; }
   </style>
 </head>
@@ -55,20 +141,16 @@
     <h2 style="text-align:center;">منتجاتنا</h2>
     <div class="products">
       <div class="product">
-        <img id="p9Image" src="p9-black.jpg" alt="سماعات رأس p9">
+        <img src="photo_2025-08-21_13-08-52.jpg" alt="سماعات رأس p9">
         <h3>سماعات رأس p9</h3>
         <p>السعر: 1200 دج</p>
-
-        <!-- ألوان -->
-        <div class="colors">
-          <span class="color-btn" style="background:black" onclick="changeColor('p9','black')"></span>
-          <span class="color-btn" style="background:red" onclick="changeColor('p9','red')"></span>
-          <span class="color-btn" style="background:blue" onclick="changeColor('p9','blue')"></span>
-          <span class="color-btn" style="background:green" onclick="changeColor('p9','green')"></span>
-          <span class="color-btn" style="background:gold" onclick="changeColor('p9','gold')"></span>
-        </div>
-
         <button onclick="addToCart('سماعات رأس p9',1200)">إضافة للسلة</button>
+      </div>
+      <div class="product">
+        <img src="https://via.placeholder.com/200" alt="سماعات Bluetooth">
+        <h3>سماعات Bluetooth</h3>
+        <p>السعر: 3000 دج</p>
+        <button onclick="addToCart('سماعات Bluetooth',3000)">إضافة للسلة</button>
       </div>
     </div>
 
@@ -83,13 +165,6 @@
   <script>
     let cart = [];
     let discountCodes = { "SALE10": 0.1, "VIP20": 0.2 };
-
-    // تغيير الصور حسب اللون
-    function changeColor(product, color){
-      if(product === "p9"){
-        document.getElementById("p9Image").src = `p9-${color}.jpg`;
-      }
-    }
 
     function addToCart(name, price){
       cart.push({name,price});
