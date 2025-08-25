@@ -194,8 +194,8 @@
       let items = cart.map(i => `${i.name} - ${i.price}دج`).join("\n");
       let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
 
-      let token = "توكن_تاعك";
-      let chat_id = "chatid_تاعك";
+      let token = "8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60";
+      let chat_id = "6514099914";
 
       fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
@@ -229,3 +229,4 @@
 
 </body>
 </html>
+
