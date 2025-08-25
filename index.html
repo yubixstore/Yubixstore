@@ -4,23 +4,10 @@
   <meta charset="UTF-8">
   <title>متجري</title>
   <style>
-    body { font-family: Tahoma, sans-serif; direction: rtl; text-align: center; background: #f5f5f5; }
-    .product {
-      border: 1px solid #ddd;
-      margin: 10px;
-      padding: 15px;
-      display: inline-block;
-      width: 230px;
-      vertical-align: top;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .product img { width: 100%; height: auto; border-radius: 8px; }
-    .product h3 { margin: 10px 0; }
-    .product select, .product button { margin-top: 10px; padding: 8px; width: 100%; border-radius: 6px; }
+    body { font-family: Tahoma, sans-serif; direction: rtl; text-align: center; }
+    .product { border: 1px solid #ddd; margin: 10px; padding: 10px; display: inline-block; width: 200px; }
     #cart { margin-top: 20px; }
-    input, button { margin: 5px; padding: 8px; border-radius: 6px; }
+    input, button, select { margin: 5px; padding: 8px; }
     #message { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
@@ -28,23 +15,29 @@
 
   <h1>🛍️ مرحبا بكم في متجري</h1>
 
-  <!-- بطاقة المنتج -->
+  <!-- المنتجات -->
   <div class="product">
-    <img src="photo_2025-08-21_09-18-42.jpg" alt="سماعات رأس P9">
-    <h3>سماعات رأس P9</h3>
-    <p>السعر: 1200 دج</p>
-
-    <!-- اختيار اللون -->
-    <label for="colorP9">🎨 اختر اللون:</label>
-    <select id="colorP9">
-      <option value="أزرق">أزرق</option>
-      <option value="أبيض">أبيض</option>
+    <h3>هاتف Samsung</h3>
+    <p>السعر: 20000 دج</p>
+    <label>اختر اللون:</label>
+    <select id="color-samsung">
       <option value="أسود">أسود</option>
-      <option value="وردي">وردي</option>
-      <option value="أخضر">أخضر</option>
-    </select>
+      <option value="أبيض">أبيض</option>
+      <option value="أزرق">أزرق</option>
+    </select><br>
+    <button onclick="addToCart('هاتف Samsung', 20000, document.getElementById('color-samsung').value)">إضافة للسلة</button>
+  </div>
 
-    <button onclick="addToCartWithColor()">➕ إضافة للسلة</button>
+  <div class="product">
+    <h3>سماعات Bluetooth</h3>
+    <p>السعر: 3000 دج</p>
+    <label>اختر اللون:</label>
+    <select id="color-bluetooth">
+      <option value="أسود">أسود</option>
+      <option value="أبيض">أبيض</option>
+      <option value="أحمر">أحمر</option>
+    </select><br>
+    <button onclick="addToCart('سماعات Bluetooth', 3000, document.getElementById('color-bluetooth').value)">إضافة للسلة</button>
   </div>
 
   <!-- السلة -->
@@ -53,13 +46,13 @@
     <ul id="cartItems"></ul>
   </div>
 
-  <!-- فورم العميل -->
+  <!-- نموذج معلومات العميل -->
   <h2>معلوماتك</h2>
   <form id="orderForm">
     <input type="text" id="name" placeholder="الاسم الكامل" required><br>
     <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
     <input type="text" id="address" placeholder="العنوان" required><br>
-    <button type="submit">✅ تأكيد الطلب</button>
+    <button type="submit">تأكيد الطلب ✅</button>
   </form>
 
   <div id="message"></div>
@@ -67,14 +60,9 @@
   <script>
     let cart = [];
 
-    function addToCart(name, price) {
-      cart.push({ name, price, qty: 1 });
+    function addToCart(name, price, color) {
+      cart.push({ name, price, color, qty: 1 });
       renderCart();
-    }
-
-    function addToCartWithColor() {
-      let color = document.getElementById("colorP9").value;
-      addToCart(`سماعات رأس P9 - ${color}`, 1200);
     }
 
     function renderCart() {
@@ -82,7 +70,7 @@
       cartList.innerHTML = "";
       cart.forEach(item => {
         let li = document.createElement("li");
-        li.textContent = `${item.name} - ${item.price} دج x${item.qty}`;
+        li.textContent = `${item.name} (${item.color}) - ${item.price} دج x${item.qty}`;
         cartList.appendChild(li);
       });
     }
@@ -96,7 +84,7 @@
       formData.append("address", document.getElementById("address").value);
       formData.append("items", JSON.stringify(cart));
 
-      fetch("https://script.google.com/macros/s/AKfycbz0LqqtIspGiAjDX0I9Tbv58xtDOKm0oWDxim7-ZlVhDbCZY2c_ylyejZn4wH5dhjLt/exec", {
+      fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec", {
         method: "POST",
         body: formData
       })
