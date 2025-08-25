@@ -1,71 +1,233 @@
-<script>
-  let cart = [];
-  let discountCodes = { "SALE10": 0.1, "VIP20": 0.2 }; // أكواد الخصم
-
-  function addToCart(name, price){
-    cart.push({name,price});
-    renderCart();
-  }
-
-  function renderCart(){
-    let list = document.getElementById("cartItems");
-    list.innerHTML="";
-    let total = 0;
-    cart.forEach(item => {
-      let li = document.createElement("li");
-      li.textContent = `${item.name} - ${item.price}دج`;
-      list.appendChild(li);
-      total += item.price;
-    });
-    document.getElementById("total").textContent = `المجموع: ${total} دج`;
-  }
-
-  document.getElementById("orderForm").addEventListener("submit", function(e){
-    e.preventDefault();
-    let name = document.getElementById("name").value;
-    let phone = document.getElementById("phone").value;
-    let address = document.getElementById("address").value;
-    let discountCode = document.getElementById("discount").value.trim();
-
-    let total = cart.reduce((sum,item)=>sum+item.price,0);
-    if(discountCodes[discountCode]){
-      let discount = discountCodes[discountCode];
-      total = total - (total*discount);
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>متجري</title>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+    }
+    /* صفحة البداية */
+    #welcome {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #004e92, #5dade2);
+      color: white;
+      text-align: center;
+    }
+    #welcome h1 { font-size: 40px; margin-bottom: 20px; }
+    #logo {
+      width: 120px;
+      height: 120px;
+      background: white;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #004e92;
+      font-weight: bold;
+    }
+    #enterBtn {
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 25px;
+      background: #ffcc00;
+      cursor: pointer;
     }
 
-    let items = cart.map(i => `${i.name} - ${i.price}دج`).join("\n");
-    let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
+    /* المتجر */
+    #store {
+      display: none;
+      background: linear-gradient(135deg, #5dade2, #004e92);
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 15px;
+    }
+    .product {
+      background: white;
+      color: black;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+    }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .cart {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 260px;
+      background: rgba(0,0,0,0.85);
+      padding: 15px;
+      overflow-y: auto;
+    }
+    .cart h3 { color: #ffcc00; }
+    .social {
+      margin-top: 30px;
+      text-align: center;
+    }
+    .social a {
+      margin: 0 10px;
+      color: white;
+      font-size: 24px;
+      text-decoration: none;
+    }
+    form input, form button, form textarea {
+      margin: 5px;
+      padding: 8px;
+      width: 90%;
+      border-radius: 6px;
+      border: none;
+    }
+    form button {
+      background: #ffcc00;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    textarea { resize: none; }
+  </style>
+</head>
+<body>
 
-    // ✅ هنا حطيت التوكن والـ chat_id لي عطيتني
-    let token = "8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60";
-    let chat_id = "6514099914";
+  <!-- صفحة البداية -->
+  <div id="welcome">
+    <div id="logo">لوجو</div>
+    <h1>🛍️ اسم المتجر</h1>
+    <button id="enterBtn">ادخل ➡️</button>
+  </div>
 
-    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        chat_id: chat_id,
-        text: message
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if(data.ok){
-        document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
-        cart = [];
-        renderCart();
-        document.getElementById("orderForm").reset();
-      }else{
-        document.getElementById("message").textContent = "❌ فشل الإرسال! (تحقق من التوكن أو ID)";
+  <!-- المتجر -->
+  <div id="store">
+    <div class="cart">
+      <h3>🛒 السلة</h3>
+      <ul id="cartItems"></ul>
+      <h4 id="total">المجموع: 0 دج</h4>
+
+      <!-- نموذج معلومات العميل -->
+      <form id="orderForm">
+        <input type="text" id="name" placeholder="الاسم الكامل" required><br>
+        <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
+        <textarea id="address" placeholder="العنوان بالتفصيل" required></textarea><br>
+        <input type="text" id="discount" placeholder="أدخل كود الخصم"><br>
+        <button type="submit">تأكيد وإرسال الطلب ✅</button>
+      </form>
+      <p id="message"></p>
+    </div>
+
+    <h2 style="text-align:center;">منتجاتنا</h2>
+    <div class="products">
+      <div class="product">
+        <img src="https://via.placeholder.com/200" alt="هاتف Samsung">
+        <h3>هاتف Samsung</h3>
+        <p>السعر: 20000 دج</p>
+        <button onclick="addToCart('هاتف Samsung',20000)">إضافة للسلة</button>
+      </div>
+      <div class="product">
+        <img src="https://via.placeholder.com/200" alt="سماعات Bluetooth">
+        <h3>سماعات Bluetooth</h3>
+        <p>السعر: 3000 دج</p>
+        <button onclick="addToCart('سماعات Bluetooth',3000)">إضافة للسلة</button>
+      </div>
+    </div>
+
+    <!-- روابط التواصل -->
+    <div class="social">
+      <a href="#">📷</a>
+      <a href="#">🎵</a>
+      <a href="#">📘</a>
+      <a href="#">✈️</a>
+    </div>
+  </div>
+
+  <script>
+    let cart = [];
+    let discountCodes = { "SALE10": 0.1, "VIP20": 0.2 }; // أكواد الخصم
+
+    function addToCart(name, price){
+      cart.push({name,price});
+      renderCart();
+    }
+
+    function renderCart(){
+      let list = document.getElementById("cartItems");
+      list.innerHTML="";
+      let total = 0;
+      cart.forEach(item => {
+        let li = document.createElement("li");
+        li.textContent = `${item.name} - ${item.price}دج`;
+        list.appendChild(li);
+        total += item.price;
+      });
+      document.getElementById("total").textContent = `المجموع: ${total} دج`;
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      let name = document.getElementById("name").value;
+      let phone = document.getElementById("phone").value;
+      let address = document.getElementById("address").value;
+      let discountCode = document.getElementById("discount").value.trim();
+
+      let total = cart.reduce((sum,item)=>sum+item.price,0);
+      if(discountCodes[discountCode]){
+        let discount = discountCodes[discountCode];
+        total = total - (total*discount);
       }
-    })
-    .catch(err => {
-      document.getElementById("message").textContent = "❌ خطأ في الاتصال!";
-    });
-  });
 
-  document.getElementById("enterBtn").addEventListener("click",()=>{
-    document.getElementById("welcome").style.display="none";
-    document.getElementById("store").style.display="block";
-  });
-</script>
+      let items = cart.map(i => `${i.name} - ${i.price}دج`).join("\n");
+      let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
+
+      // 🔹 التوكن والـ chat_id هنا
+      let token = "8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60";
+      let chat_id = "6514099914";
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chat_id,
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.ok){
+          document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
+          cart = [];
+          renderCart();
+          document.getElementById("orderForm").reset();
+        } else {
+          document.getElementById("message").textContent = "❌ فشل الإرسال! تحقق من التوكن أو ID.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("message").textContent = "❌ فشل الاتصال بالسيرفر!";
+      });
+    });
+
+    document.getElementById("enterBtn").addEventListener("click",()=>{
+      document.getElementById("welcome").style.display="none";
+      document.getElementById("store").style.display="block";
+    });
+  </script>
+
+</body>
+</html>
