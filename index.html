@@ -1,115 +1,76 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="ar">
 <head>
   <meta charset="UTF-8">
-  <title>متجر P9</title>
+  <title>متجري</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #1e90ff, #87cefa);
-      margin: 0;
-      padding: 0;
-    }
-    #logo img {
-      width: 120px;
-      border-radius: 50%;
-      margin: 20px auto;
-      display: block;
-    }
-    .product {
-      text-align: center;
-      margin: 20px;
-    }
-    .product img {
-      width: 220px;
-      border-radius: 15px;
-    }
-    .color-options {
-      margin: 15px 0;
-    }
-    .color-btn {
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      margin: 5px;
-      cursor: pointer;
-      border: 2px solid #fff;
-    }
-    .popup {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-    }
-    .popup-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 15px;
-      text-align: center;
-      width: 320px;
-    }
-    .popup-content img {
-      width: 200px;
-      border-radius: 10px;
-    }
-    button {
-      background: #1e90ff;
-      color: white;
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+    body { font-family: Tahoma, sans-serif; direction: rtl; text-align: center; }
+    .product { border: 1px solid #ddd; margin: 10px; padding: 10px; display: inline-block; width: 200px; }
+    #cart { margin-top: 20px; }
+    input, button { margin: 5px; padding: 8px; }
+    #message { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <!-- Logo -->
-  <div id="logo">
-    <img src="logo.jpg" alt="Logo">
-  </div>
+  <h1>🛍️ مرحبا بكم في متجري</h1>
 
-  <!-- Produit -->
+  <!-- المنتجات -->
   <div class="product">
-    <h2>سماعات P9</h2>
-    <img id="productImage" src="p9-black.jpg.jpg" alt="P9">
-    <p>السعر: 3500 دج</p>
-    <button onclick="openPopup()">إختر اللون</button>
+    <h3>هاتف Samsung</h3>
+    <p>السعر: 20000 دج</p>
+    <button onclick="addToCart('هاتف Samsung', 20000)">إضافة للسلة</button>
   </div>
 
-  <!-- Popup -->
-  <div class="popup" id="popup">
-    <div class="popup-content">
-      <h3>اختر اللون</h3>
-      <img id="popupImage" src="p9-black.jpg.jpg" alt="P9">
-      <div class="color-options">
-        <!-- أزرار الألوان -->
-        <span class="color-btn" style="background:black" onclick="changeColor('p9-black.jpg.jpg')"></span>
-        <span class="color-btn" style="background:blue" onclick="changeColor('p9-bleu.jpg.jpg')"></span>
-        <span class="color-btn" style="background:green" onclick="changeColor('p9-green.jpg.jpg')"></span>
-        <span class="color-btn" style="background:pink" onclick="changeColor('p9-roze.jpg.jpg')"></span>
-        <span class="color-btn" style="background:white; border:1px solid #000;" onclick="changeColor('p9-white.jpg.jpg')"></span>
-      </div>
-      <button onclick="closePopup()">تأكيد</button>
-    </div>
+  <div class="product">
+    <h3>سماعات Bluetooth</h3>
+    <p>السعر: 3000 دج</p>
+    <button onclick="addToCart('سماعات Bluetooth', 3000)">إضافة للسلة</button>
   </div>
+
+  <!-- السلة -->
+  <div id="cart">
+    <h2>🛒 سلة المشتريات</h2>
+    <ul id="cartItems"></ul>
+  </div>
+
+  <!-- نموذج معلومات العميل -->
+  <h2>معلوماتك</h2>
+  <form id="orderForm">
+    <input type="text" id="name" placeholder="الاسم الكامل" required><br>
+    <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
+    <input type="text" id="address" placeholder="العنوان" required><br>
+    <button type="submit">تأكيد الطلب ✅</button>
+  </form>
+
+  <div id="message"></div>
 
   <script>
-    function openPopup() {
-      document.getElementById("popup").style.display = "flex";
-    }
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
-    function changeColor(image) {
-      document.getElementById("popupImage").src = image;
-      document.getElementById("productImage").src = image;
-    }
-  </script>
+    let cart = [];
 
-</body>
-</html>
+    function addToCart(name, price) {
+      cart.push({ name, price, qty: 1 });
+      renderCart();
+    }
+
+    function renderCart() {
+      const cartList = document.getElementById("cartItems");
+      cartList.innerHTML = "";
+      cart.forEach(item => {
+        let li = document.createElement("li");
+        li.textContent = `${item.name} - ${item.price} دج x${item.qty}`;
+        cartList.appendChild(li);
+      });
+    }
+
+    document.getElementById("orderForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const address = document.getElementById("address").value;
+
+      let itemsList = cart.map(i => `${i.name} (${i.price} دج x${i.qty})`).join("\n");
+      let message = `📦 طلب جديد\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n🏠 العنوان: ${address}\n\n🛒
+
+
