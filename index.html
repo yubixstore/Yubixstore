@@ -17,7 +17,7 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      background: linear-gradient(135deg, #004e92, #5dade2);
       color: white;
       text-align: center;
     }
@@ -31,7 +31,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #2a5298;
+      color: #004e92;
       font-weight: bold;
     }
     #enterBtn {
@@ -46,7 +46,7 @@
     /* المتجر */
     #store {
       display: none;
-      background: linear-gradient(135deg, #2a5298, #1e3c72);
+      background: linear-gradient(135deg, #5dade2, #004e92);
       min-height: 100vh;
       color: white;
       padding: 20px;
@@ -90,7 +90,7 @@
       font-size: 24px;
       text-decoration: none;
     }
-    form input, form button {
+    form input, form button, form textarea {
       margin: 5px;
       padding: 8px;
       width: 90%;
@@ -102,6 +102,7 @@
       font-weight: bold;
       cursor: pointer;
     }
+    textarea { resize: none; }
   </style>
 </head>
 <body>
@@ -124,9 +125,9 @@
       <form id="orderForm">
         <input type="text" id="name" placeholder="الاسم الكامل" required><br>
         <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
-        <input type="text" id="address" placeholder="العنوان" required><br>
+        <textarea id="address" placeholder="العنوان بالتفصيل" required></textarea><br>
         <input type="text" id="discount" placeholder="أدخل كود الخصم"><br>
-        <button type="submit">تأكيد الطلب ✅</button>
+        <button type="submit">تأكيد وإرسال الطلب ✅</button>
       </form>
       <p id="message"></p>
     </div>
@@ -194,12 +195,28 @@
       let items = cart.map(i => `${i.name} - ${i.price}دج`).join("\n");
       let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
 
-      document.getElementById("message").textContent = "✅ تم تأكيد الطلب!";
-      console.log(message); // هنا تقدر تبعثها للبوت كيما قبل
+      // إرسال للبوت
+      let token = "ضع_التوكن_هنا"; //8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60
+      let chat_id = "6514099914"; // ID تاعك
 
-      cart = [];
-      renderCart();
-      document.getElementById("orderForm").reset();
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chat_id,
+          text: message
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
+        cart = [];
+        renderCart();
+        document.getElementById("orderForm").reset();
+      })
+      .catch(err => {
+        document.getElementById("message").textContent = "❌ فشل الإرسال!";
+      });
     });
 
     document.getElementById("enterBtn").addEventListener("click",()=>{
