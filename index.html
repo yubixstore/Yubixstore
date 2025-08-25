@@ -4,11 +4,23 @@
   <meta charset="UTF-8">
   <title>متجري</title>
   <style>
-    body { font-family: Tahoma, sans-serif; direction: rtl; text-align: center; }
-    .product { border: 1px solid #ddd; margin: 10px; padding: 10px; display: inline-block; width: 220px; vertical-align: top; }
-    .product img { width: 100%; height: auto; }
+    body { font-family: Tahoma, sans-serif; direction: rtl; text-align: center; background: #f5f5f5; }
+    .product {
+      border: 1px solid #ddd;
+      margin: 10px;
+      padding: 15px;
+      display: inline-block;
+      width: 230px;
+      vertical-align: top;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .product img { width: 100%; height: auto; border-radius: 8px; }
+    .product h3 { margin: 10px 0; }
+    .product select, .product button { margin-top: 10px; padding: 8px; width: 100%; border-radius: 6px; }
     #cart { margin-top: 20px; }
-    input, button, select { margin: 5px; padding: 8px; }
+    input, button { margin: 5px; padding: 8px; border-radius: 6px; }
     #message { margin-top: 15px; font-weight: bold; }
   </style>
 </head>
@@ -16,26 +28,23 @@
 
   <h1>🛍️ مرحبا بكم في متجري</h1>
 
-  <!-- المنتجات -->
-  <div class="products">
-    <div class="product">
-      <img src="photo_2025-08-21_09-18-42.jpg" alt="سماعات رأس P9">
-      <h3>سماعات رأس P9</h3>
-      <p>السعر: 1200 دج</p>
+  <!-- بطاقة المنتج -->
+  <div class="product">
+    <img src="photo_2025-08-21_09-18-42.jpg" alt="سماعات رأس P9">
+    <h3>سماعات رأس P9</h3>
+    <p>السعر: 1200 دج</p>
 
-      <!-- اختيار اللون -->
-      <label for="colorP9">اختر اللون:</label>
-      <select id="colorP9">
-        <option value="أزرق">أزرق</option>
-        <option value="أبيض">أبيض</option>
-        <option value="أسود">أسود</option>
-        <option value="وردي">وردي</option>
-        <option value="أخضر">أخضر</option>
-      </select>
+    <!-- اختيار اللون -->
+    <label for="colorP9">🎨 اختر اللون:</label>
+    <select id="colorP9">
+      <option value="أزرق">أزرق</option>
+      <option value="أبيض">أبيض</option>
+      <option value="أسود">أسود</option>
+      <option value="وردي">وردي</option>
+      <option value="أخضر">أخضر</option>
+    </select>
 
-      <br><br>
-      <button onclick="addToCartWithColor()">إضافة للسلة</button>
-    </div>
+    <button onclick="addToCartWithColor()">➕ إضافة للسلة</button>
   </div>
 
   <!-- السلة -->
@@ -44,13 +53,13 @@
     <ul id="cartItems"></ul>
   </div>
 
-  <!-- نموذج معلومات العميل -->
+  <!-- فورم العميل -->
   <h2>معلوماتك</h2>
   <form id="orderForm">
     <input type="text" id="name" placeholder="الاسم الكامل" required><br>
     <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
     <input type="text" id="address" placeholder="العنوان" required><br>
-    <button type="submit">تأكيد الطلب ✅</button>
+    <button type="submit">✅ تأكيد الطلب</button>
   </form>
 
   <div id="message"></div>
@@ -65,7 +74,7 @@
 
     function addToCartWithColor() {
       let color = document.getElementById("colorP9").value;
-      addToCart(`سماعات رأس P9 - لون: ${color}`, 1200);
+      addToCart(`سماعات رأس P9 - ${color}`, 1200);
     }
 
     function renderCart() {
