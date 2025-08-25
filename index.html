@@ -1,163 +1,114 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Yubix Store</title>
+  <title>متجر P9</title>
   <style>
-    body { font-family: Tahoma, sans-serif; margin: 0; padding: 0; direction: rtl; }
-    #logo { margin: 20px auto; width: 140px; height: 140px; border-radius: 50%; overflow: hidden; box-shadow: 0px 0px 12px rgba(0,0,0,0.3); }
-    .logo-img { width: 100%; height: 100%; object-fit: cover; }
-    #welcome { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #004e92, #5dade2); color: white; text-align: center; }
-    #welcome h1 { font-size: 40px; margin-bottom: 20px; }
-    #enterBtn { padding: 12px 30px; font-size: 18px; border: none; border-radius: 25px; background: #ffcc00; cursor: pointer; }
-    #store { display: none; background: linear-gradient(135deg, #5dade2, #004e92); min-height: 100vh; color: white; padding: 20px; }
-    .products { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
-    .product { background: white; color: black; padding: 10px; border-radius: 10px; text-align: center; }
-    .product img { width: 100%; height: 150px; object-fit: cover; border-radius: 10px; }
-    .colors { margin-top: 8px; }
-    .color-btn { width: 22px; height: 22px; border-radius: 50%; border: 1px solid #ccc; display: inline-block; cursor: pointer; margin: 2px; }
-    .cart { position: fixed; left: 0; top: 0; bottom: 0; width: 260px; background: rgba(0,0,0,0.85); padding: 15px; overflow-y: auto; }
-    .cart h3 { color: #ffcc00; }
-    .social { margin-top: 30px; text-align: center; }
-    .social a { margin: 0 10px; color: white; font-size: 24px; text-decoration: none; }
-    form input, form button, form textarea { margin: 5px; padding: 8px; width: 90%; border-radius: 6px; border: none; }
-    form button { background: #ffcc00; font-weight: bold; cursor: pointer; }
-    textarea { resize: none; }
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #1e90ff, #87cefa);
+      margin: 0;
+      padding: 0;
+    }
+    #logo img {
+      width: 120px;
+      border-radius: 50%;
+      margin: 20px auto;
+      display: block;
+    }
+    .product {
+      text-align: center;
+      margin: 20px;
+    }
+    .product img {
+      width: 200px;
+      border-radius: 15px;
+    }
+    .color-options {
+      margin: 15px 0;
+    }
+    .color-btn {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      margin: 5px;
+      cursor: pointer;
+      border: 2px solid #fff;
+    }
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      width: 300px;
+    }
+    .popup-content img {
+      width: 200px;
+      border-radius: 10px;
+    }
+    button {
+      background: #1e90ff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- صفحة البداية -->
-  <div id="welcome">
-    <div id="logo">
-      <img src="photo_2025-08-21_13-08-52.jpg" alt="Logo" class="logo-img">
-    </div>
-    <h1>yubixstore</h1>
-    <button id="enterBtn">ادخل ➡️</button>
+  <!-- Logo -->
+  <div id="logo">
+    <img src="logo.jpg" alt="Logo">
   </div>
 
-  <!-- المتجر -->
-  <div id="store">
-    <div class="cart">
-      <h3>🛒 السلة</h3>
-      <ul id="cartItems"></ul>
-      <h4 id="total">المجموع: 0 دج</h4>
-      <form id="orderForm">
-        <input type="text" id="name" placeholder="الاسم الكامل" required><br>
-        <input type="text" id="phone" placeholder="رقم الهاتف" required><br>
-        <textarea id="address" placeholder="العنوان بالتفصيل" required></textarea><br>
-        <input type="text" id="discount" placeholder="أدخل كود الخصم"><br>
-        <button type="submit">تأكيد وإرسال الطلب ✅</button>
-      </form>
-      <p id="message"></p>
-    </div>
+  <!-- Produit -->
+  <div class="product">
+    <h2>سماعات P9</h2>
+    <img id="productImage" src="p9-black.jpg.jpg" alt="P9">
+    <p>السعر: 3500 دج</p>
+    <button onclick="openPopup()">إختر اللون</button>
+  </div>
 
-    <h2 style="text-align:center;">منتجاتنا</h2>
-    <div class="products">
-      <div class="product">
-        <img id="p9Image" src="p9-black.jpg" alt="سماعات رأس p9">
-        <h3>سماعات رأس p9</h3>
-        <p>السعر: 1200 دج</p>
-
-        <!-- ألوان -->
-        <div class="colors">
-          <span class="color-btn" style="background:black" onclick="changeColor('p9','black')"></span>
-          <span class="color-btn" style="background:roze" onclick="changeColor('p9','roze')"></span>
-          <span class="color-btn" style="background:blue" onclick="changeColor('p9','blue')"></span>
-          <span class="color-btn" style="background:green" onclick="changeColor('p9','green')"></span>
-          <span class="color-btn" style="background:white" onclick="changeColor('p9','white')"></span>
-        </div>
-
-        <button onclick="addToCart('سماعات رأس p9',1200)">إضافة للسلة</button>
+  <!-- Popup -->
+  <div class="popup" id="popup">
+    <div class="popup-content">
+      <h3>اختر اللون</h3>
+      <img id="popupImage" src="p9-black.jpg.jpg" alt="P9">
+      <div class="color-options">
+        <span class="color-btn" style="background:black" onclick="changeColor('p9-black.jpg.jpg')"></span>
+        <span class="color-btn" style="background:blue" onclick="changeColor('p9-bleu.jpg.jpg')"></span>
+        <span class="color-btn" style="background:green" onclick="changeColor('p9-green.jpg.jpg')"></span>
+        <span class="color-btn" style="background:pink" onclick="changeColor('p9-roze.jpg.jpg')"></span>
+        <span class="color-btn" style="background:white; border:1px solid #000;" onclick="changeColor('p9-white.jpg.jpg')"></span>
       </div>
-    </div>
-
-    <div class="social">
-      <a href="#">📷</a>
-      <a href="#">🎵</a>
-      <a href="#">📘</a>
-      <a href="#">✈️</a>
+      <button onclick="closePopup()">تأكيد</button>
     </div>
   </div>
 
   <script>
-    let cart = [];
-    let discountCodes = { "SALE10": 0.1, "VIP20": 0.2 };
-
-    // تغيير الصور حسب اللون
-    function changeColor(product, color){
-      if(product === "p9"){
-        document.getElementById("p9Image").src = `p9-${color}.jpg`;
-      }
+    function openPopup() {
+      document.getElementById("popup").style.display = "flex";
     }
-
-    function addToCart(name, price){
-      cart.push({name,price});
-      renderCart();
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
     }
-
-    function renderCart(){
-      let list = document.getElementById("cartItems");
-      list.innerHTML="";
-      let total = 0;
-      cart.forEach(item => {
-        let li = document.createElement("li");
-        li.textContent = `${item.name} - ${item.price}دج`;
-        list.appendChild(li);
-        total += item.price;
-      });
-      document.getElementById("total").textContent = `المجموع: ${total} دج`;
+    function changeColor(image) {
+      document.getElementById("popupImage").src = image;
+      document.getElementById("productImage").src = image;
     }
-
-    document.getElementById("orderForm").addEventListener("submit", function(e){
-      e.preventDefault();
-      let name = document.getElementById("name").value;
-      let phone = document.getElementById("phone").value;
-      let address = document.getElementById("address").value;
-      let discountCode = document.getElementById("discount").value.trim();
-
-      let total = cart.reduce((sum,item)=>sum+item.price,0);
-      if(discountCodes[discountCode]){
-        let discount = discountCodes[discountCode];
-        total = total - (total*discount);
-      }
-
-      let items = cart.map(i => `${i.name} - ${i.price}دج`).join("\n");
-      let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}\n💰 المجموع بعد الخصم: ${total} دج`;
-
-      let token = "توكن_تاعك";
-      let chat_id = "chatid_تاعك";
-
-      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          chat_id: chat_id,
-          text: message
-        })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if(data.ok){
-          document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
-          cart = [];
-          renderCart();
-          document.getElementById("orderForm").reset();
-        } else {
-          document.getElementById("message").textContent = "❌ فشل الإرسال! تحقق من التوكن أو ID.";
-        }
-      })
-      .catch(err => {
-        document.getElementById("message").textContent = "❌ فشل الاتصال بالسيرفر!";
-      });
-    });
-
-    document.getElementById("enterBtn").addEventListener("click",()=>{
-      document.getElementById("welcome").style.display="none";
-      document.getElementById("store").style.display="block";
-    });
   </script>
 
 </body>
 </html>
-
