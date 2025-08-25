@@ -66,19 +66,28 @@
     document.getElementById("orderForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      let formData = new FormData();
-      formData.append("name", document.getElementById("name").value);
-      formData.append("phone", document.getElementById("phone").value);
-      formData.append("address", document.getElementById("address").value);
-      formData.append("items", JSON.stringify(cart));
+      let name = document.getElementById("name").value;
+      let phone = document.getElementById("phone").value;
+      let address = document.getElementById("address").value;
+      let items = cart.map(i => `${i.name} - ${i.price}دج x${i.qty}`).join("\n");
 
-      fetch("https://script.google.com/macros/s/AKfycbz0LqqtIspGiAjDX0I9Tbv58xtDOKm0oWDxim7-ZlVhDbCZY2c_ylyejZn4wH5dhjLt/exec", {
+      let message = `📦 طلب جديد:\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${address}\n🛒 المنتجات:\n${items}`;
+
+      // 🟢 لازم تبدلهم بالقيم الصحيحة
+      let token = "8279772647:AAHE7reIiqjDbW8Jkpr57KSBCKH5w0SRA60";   // 🔑 الـ Token لي يعطيهالك BotFather
+      let chat_id = "6514099914";   // 🆔 ID تاعك ولا تاع الجروب
+
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
         method: "POST",
-        body: formData
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chat_id,
+          text: message
+        })
       })
-      .then(res => res.text())
+      .then(res => res.json())
       .then(data => {
-        document.getElementById("message").textContent = "✅ تم إرسال الطلب بنجاح!";
+        document.getElementById("message").textContent = "✅ تم إرسال الطلب للبوت!";
         cart = [];
         renderCart();
         document.getElementById("orderForm").reset();
@@ -91,6 +100,3 @@
 
 </body>
 </html>
-
-
-
