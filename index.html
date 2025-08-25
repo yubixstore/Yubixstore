@@ -9,6 +9,27 @@
     #cart { margin-top: 20px; }
     input, button { margin: 5px; padding: 8px; }
     #message { margin-top: 15px; font-weight: bold; }
+
+    /* popup */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 300px;
+      text-align: center;
+    }
+    .popup-content button {
+      margin: 10px;
+    }
   </style>
 </head>
 <body>
@@ -19,13 +40,13 @@
   <div class="product">
     <h3>هاتف Samsung</h3>
     <p>السعر: 20000 دج</p>
-    <button onclick="addToCart('هاتف Samsung', 20000)">إضافة للسلة</button>
+    <button onclick="openPopup('هاتف Samsung', 20000)">إضافة للسلة</button>
   </div>
 
   <div class="product">
     <h3>سماعات Bluetooth</h3>
     <p>السعر: 3000 دج</p>
-    <button onclick="addToCart('سماعات Bluetooth', 3000)">إضافة للسلة</button>
+    <button onclick="openPopup('سماعات Bluetooth', 3000)">إضافة للسلة</button>
   </div>
 
   <!-- السلة -->
@@ -45,12 +66,38 @@
 
   <div id="message"></div>
 
+  <!-- popup -->
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <h3 id="popupTitle"></h3>
+      <p id="popupPrice"></p>
+      <label>الكمية: <input type="number" id="popupQty" value="1" min="1"></label><br>
+      <button onclick="confirmAdd()">تأكيد</button>
+      <button onclick="closePopup()">إلغاء</button>
+    </div>
+  </div>
+
   <script>
     let cart = [];
+    let currentProduct = {};
 
-    function addToCart(name, price) {
-      cart.push({ name, price, qty: 1 });
+    function openPopup(name, price) {
+      currentProduct = { name, price };
+      document.getElementById("popupTitle").textContent = name;
+      document.getElementById("popupPrice").textContent = "السعر: " + price + " دج";
+      document.getElementById("popupQty").value = 1;
+      document.getElementById("popup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+    }
+
+    function confirmAdd() {
+      let qty = parseInt(document.getElementById("popupQty").value);
+      cart.push({ name: currentProduct.name, price: currentProduct.price, qty });
       renderCart();
+      closePopup();
     }
 
     function renderCart() {
@@ -66,11 +113,25 @@
     document.getElementById("orderForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
-      const name = document.getElementById("name").value;
-      const phone = document.getElementById("phone").value;
-      const address = document.getElementById("address").value;
+      let data = {
+        name: document.getElementById("name").value,
+        phone: document.getElementById("phone").value,
+        address: document.getElementById("address").value,
+        items: cart
+      };
 
-      let itemsList = cart.map(i => `${i.name} (${i.price} دج x${i.qty})`).join("\n");
-      let message = `📦 طلب جديد\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n🏠 العنوان: ${address}\n\n🛒
+      // هنا تربط مع البوت تاع التلغرام كيما شرحنا
+      console.log("📩 إرسال للتلغرام:", data);
+
+      document.getElementById("message").textContent = "✅ تم إرسال الطلب بنجاح!";
+      cart = [];
+      renderCart();
+      document.getElementById("orderForm").reset();
+    });
+  </script>
+
+</body>
+</html>
+
 
 
